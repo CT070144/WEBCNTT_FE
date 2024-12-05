@@ -1,0 +1,17 @@
+.ql-align-center {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+blockquote {
+    border-left: solid 5px gray;
+    background: #f2f2f2;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    margin-bottom: 3px;
+    padding: 5px 0;
+}
