@@ -1,18 +1,19 @@
-import { DashboardLayout } from '@toolpad/core/DashboardLayout';
-import { Outlet } from 'react-router';
+import Header from "~/components/Layouts/components/Header";
+import Sidebar from "./Sidebar";
+import styles from './DefaultLayout.module.scss'
+import classNames from "classnames/bind";
 
-function DefaultLayout() {
+const cx = classNames.bind(styles)
+
+function DefaultLayout({ children }) {
   return (
-    // <div>
-    //   <Header />
-    //   <div className={cx("container")} style={{paddingTop: '65px'}}>
-    //     <Sidebar />
-    //     <div className={cx('contents')}>{children}</div>
-    //   </div>
-    // </div>
-    <DashboardLayout>
-      <Outlet></Outlet>
-    </DashboardLayout>
+    <div>
+      <Header />
+      <div className={cx("container")} style={{ paddingTop: '65px' }}>
+        <Sidebar />
+        <div className={cx('contents')}>{children}</div>
+      </div>
+    </div>
   );
 }
 

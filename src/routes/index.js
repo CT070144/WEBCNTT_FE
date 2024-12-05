@@ -9,14 +9,14 @@ import CreatePost from "~/pages/CreatePost";
 import Login from "~/pages/Login";
 
 const publicRoutes = [
-    { path: '', component: Home },
+    { path: '', component: Home, layout: HeaderOnly },
     { path: '/events', component: Events },
-    { path: '/posts', component: Posts },
-    { path: '/profile', component: Profile },
-    { path: '/studyRoad', component: StudyRoad },
-    { path: '/posts/:slug', component: PostDetail },
-    // { path: '/subjectsDoc', component: SubjectsDo c},
-    { path: '/login', component: Login },
+    { path: '/posts', component: Posts, layout: HeaderOnly },
+    { path: '/profile', component: Profile, layout: HeaderOnly },
+    { path: '/studyRoad', component: StudyRoad, layout: HeaderOnly },
+    { path: '/posts/:slug', component: PostDetail, layout: HeaderOnly },
+    // { path: '/subjectsDoc', component: SubjectsDo, layout: HeaderOnly c},
+    { path: '/login', component: Login, layout: HeaderOnly },
 ]
 
 const privateRoutes = [
