@@ -1,24 +1,46 @@
 import classNames from "classnames/bind";
 import styles from "./Header.module.scss";
 import { Link } from "react-router-dom";
-import { AuthContext } from "~/Authentication/AuthContext";
-import { useContext } from "react";
+import { useAuth } from "~/Authentication/AuthContext";
 import Tippy from '@tippyjs/react/headless';
+import { useEffect, useState } from "react";
 
 
 function Header() {
   const cx = classNames.bind(styles);
-  const { user } = useContext(AuthContext);
-
-  const handleLogout = () => {
-    localStorage.removeItem("auth_token");
+  const { user } = useAuth();
+  const token = localStorage.getItem("auth_token")
+  const handleLogout = async () => {
+    localStorage.clear();
+    await fetch("http://localhost:8084/user/logout", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    })
     window.location.replace(`/`);
   }
-  console.log(user)
+
+  const [route, setRoute] = useState("");
+
+  useEffect(() => {
+    if (user) {
+      if (user.roles[0] === 'ROLE_ADMIN')
+        setRoute("admin")
+      else if (user.roles[0] === 'ROLE_EMPLOYEE')
+        setRoute('employee')
+      else if (user.roles[0] === 'ROLE_STUDENT')
+        setRoute('student')
+    }
+
+  }, [user])
+
+
+
   return (
     <header className={cx("wrapper")}>
       {/* LOGO */}
-      <Link to={(user == null) ? '/' : `/${user.role}`} className={cx("logo")}>
+      <Link to={(user == null) ? '/' : `/${route}`} className={cx("logo")}>
         <img
           src="https://actvn.edu.vn/Images/actvn_big_icon.png"
           alt="Logo"
@@ -35,9 +57,11 @@ function Header() {
 
 
       {!user && (
-        <Link className={cx('login-button')} to={"/login"}>
-          Login
-        </Link>
+        <div className={cx("options")}>
+          <Link className={cx('login-button')} to={"/login"}>
+            Login
+          </Link>
+        </div>
       )
       }
 
@@ -66,9 +90,8 @@ function Header() {
           )}
         >
 
-          <div className={cx("avatar")}>
-            <img alt="" src=""></img>
-          </div>
+          <img className={cx("avatar")} src={user.avaFileCode != undefined ? ("http://localhost:8084" + user.avaFileCode) : "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"} alt=""></img>
+
         </Tippy>
       </div>}
     </header>

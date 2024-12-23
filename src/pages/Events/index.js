@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom"; // Import Link
+import { Link, useNavigate } from "react-router-dom"; // Import Link
 import classNames from "classnames/bind";
 import styles from "./Events.module.scss";
 
 function Events() {
     const cx = classNames.bind(styles);
     const url = "http://localhost:8084";
+    const navigate = useNavigate();
 
     const [arr, setArr] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -52,8 +53,8 @@ function Events() {
 
             <div className={cx('event-list')}>
                 {arr.map((event, index) => (
-                    <div key={index} className={cx('event-item')}>
-                        <div className={cx('event-tag')}>Sự kiện</div>
+                    <div key={index} className={cx('event-item')} onClick={() => navigate(`/events/${event.eventId}`)}>
+                        <div className={cx('event-tag')} >Sự kiện</div>
                         <div className={cx('event-details')}>
                             <div className={cx('event-name')}>{event.eventName}</div>
                             <div className={cx('event-date')}>

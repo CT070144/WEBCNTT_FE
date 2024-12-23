@@ -3,8 +3,6 @@ import classNames from "classnames/bind";
 import styles from "./Posts.module.scss";
 import ReactQuill from "react-quill";
 import { AuthContext } from "~/Authentication/AuthContext";
-import { Link } from "react-router-dom";
-
 
 function Posts() {
     const url = "http://localhost:8084"; // URL API của bạn
@@ -40,6 +38,8 @@ function Posts() {
     const [fileData, setFileData] = useState([]);
 
     const size = 10;
+
+    console.log(posts)
 
     const handleEditorChange = (value) => {
         setPostToUpdate({ ...postToUpdate, content: value }); // Cập nhật nội dung vào content
@@ -89,10 +89,14 @@ function Posts() {
                 });
             }
 
+            const token = localStorage.getItem("auth_token")
             // Gửi FormData qua API
             const response = await fetch(`${url}/api/posts/${postToUpdate.post_id}`, {
                 method: "PUT",
-                body: formData, // FormData không cần Content-Type, fetch tự thêm
+                body: formData,
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                } // FormData không cần Content-Type, fetch tự thêm
             });
 
             if (!response.ok) {
@@ -188,9 +192,14 @@ function Posts() {
     const deletePost = async () => {
         if (!postToDelete) return;
 
+        const token = localStorage.getItem("auth_token")
+
         try {
             const response = await fetch(`${url}/api/posts/${postToDelete.postId}`, {
                 method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
             });
 
             if (!response.ok) {
@@ -268,7 +277,6 @@ function Posts() {
     return (
         <div className={cx("container")}>
             <h2 className={cx("title")}>Danh Sách Bài Viết</h2>
-            {!(user?.role === 'student' || user == null) && <Link className={cx('createPost')} to={"/createPost"}>Tạo bài viết</Link>}
 
             <div className={cx("posts-list")}>
                 {posts.length > 0 ? (
@@ -285,7 +293,7 @@ function Posts() {
                                     Xem chi tiết
                                 </a>
 
-                                {!(user?.role === 'student' || user == null) && <div className={cx("UD-buttons")}>
+                                {!(user?.roles.includes("ROLE_STUDENT") || user == null) && <div className={cx("UD-buttons")}>
                                     <button
                                         className={cx("update-button")}
                                         onClick={() => openUpdateModal(post)}

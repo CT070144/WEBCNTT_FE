@@ -7,12 +7,11 @@ import { useNavigate } from "react-router-dom";
 function Card({ post }) {
     const cx = classNames.bind(styles);
     const navigate = useNavigate();
-
     const urlAPI = "http://localhost:8084"
 
     const [imageUrl, setImageUrl] = useState('https://actvn.edu.vn/Images/actvn_big_icon.png');
-
     useEffect(() => {
+
         const checkImageFiles = async () => {
             for (let file of post.file_dto) {
                 try {

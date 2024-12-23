@@ -1,5 +1,5 @@
 import Header from "~/components/Layouts/components/Header";
-import Sidebar from "./Sidebar";
+import SideBar from "./Sidebar";
 import styles from './DefaultLayout.module.scss'
 import classNames from "classnames/bind";
 
@@ -10,7 +10,7 @@ function DefaultLayout({ children }) {
     <div>
       <Header />
       <div className={cx("container")} style={{ paddingTop: '65px' }}>
-        <Sidebar />
+        <SideBar />
         <div className={cx('contents')}>{children}</div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom"; // Import Link
+import { Link, useNavigate } from "react-router-dom"; // Import Link
 import classNames from "classnames/bind";
 import styles from "./SpecialEvent.module.scss";
 
@@ -9,8 +9,12 @@ function SpecialEvent() {
 
     const [arr, setArr] = useState([]);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+
+
 
     useEffect(() => {
+
         fetch(url + "/api/sukien?page=0", {
             method: 'GET'
         })
@@ -23,7 +27,8 @@ function SpecialEvent() {
                 console.error('Error fetching:', err);
                 setLoading(false);
             });
-    }, []);
+    }, [navigate]);
+
 
     if (loading) {
         return <div>Loading...</div>;
@@ -34,7 +39,7 @@ function SpecialEvent() {
         const today = new Date(); // Ngày hôm nay
         const startDate = new Date(startAt); // Chuyển startAt thành đối tượng Date
         const endDate = new Date(endAt); // Chuyển endAt thành đối tượng Date
-        
+
 
         // So sánh ngày hôm nay với ngày bắt đầu và kết thúc sự kiện
         if (today < startDate) {
@@ -48,7 +53,7 @@ function SpecialEvent() {
 
     return (
         <div className={cx('container')}>
-            <h1>Sự kiện mới nhất</h1>
+            <h1>SỰ KIỆN MỚI NHẤT</h1>
 
             <div className={cx('event-list')}>
                 {arr.map((event, index) => (

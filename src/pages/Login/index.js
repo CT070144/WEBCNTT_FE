@@ -1,43 +1,92 @@
-import React, { useState, useContext } from 'react';
-import { AuthContext } from '~/Authentication/AuthContext';
+import React, { useState } from 'react';
+import { jwtDecode as decode } from 'jwt-decode';
 import classNames from 'classnames/bind';
 import styles from './Login.module.scss'
+import { fcmToken } from '~/Firebase/firebaseUtils';
+
 
 const Login = () => {
-    const { login } = useContext(AuthContext);
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState(null);
     const cx = classNames.bind(styles)
+    const formData = new FormData();
 
-    // Tạo mảng tài khoản
-    const accounts = [
-        { username: 'admin', password: '123456', role: 'admin' },
-        { username: 'student', password: '111111', role: 'student' },
-        { username: 'staff', password: '888888', role: 'staff' },
-    ];
-
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
 
     // Xử lý form đăng nhập
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
+        let fcm = ""
+        fcmToken.then((result) => fcm = result)
+        formData.append('userName', username);
+        formData.append('password', password);
 
         // Kiểm tra tài khoản
-        const account = accounts.find(acc => acc.username === username && acc.password === password);
+        try {
+            const response = await fetch("http://localhost:8084/user/login", {
+                method: "POST",
+                body: formData
+            });
 
-        if (account) {
-            // Nếu tài khoản hợp lệ, lưu vào localStorage và chuyển hướng
-            const userData = { username: account.username, role: account.role };
-            login(userData); // Lưu vào Context và localStorage
-            window.location.replace(`/${account.role}`); // Chuyển hướng đến trang dashboard (hoặc trang nào đó)
-        } else {
-            // Nếu tài khoản sai, hiển thị lỗi
-            setErrorMessage('Tài khoản hoặc mật khẩu không đúng!');
+            console.log(response)
+
+            if (!response.ok) {
+                throw new Error("Login failed");
+            }
+
+            const token = await response.text();// Giả sử API trả về token JWT
+
+            // Lưu token vào localStorage
+            localStorage.setItem("auth_token", token);
+
+            // Giải mã token và lấy thông tin người dùng
+            const decodedToken = decode(token);
+
+            // Lưu thông tin người dùng vào localStorage hoặc context
+            localStorage.setItem("user", JSON.stringify(decodedToken));
+
+            // Điều hướng đến trang phù hợp dựa trên role
+
+
+            const fcmObject = {
+                "userId": `${decodedToken.sub}`,
+                "fcmToken": `${fcm}`
+            }
+
+
+            const fcmResponse = await fetch("http://localhost:8084/api/store-fcm-token", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(fcmObject)
+            })
+
+            if (!fcmResponse.ok) {
+                throw new Error("Save FCM Token failed");
+            }
+
+            if (decodedToken.roles[0].includes("ROLE_ADMIN")) {
+                window.location.replace("/admin");
+            } else if (decodedToken.roles[0].includes("ROLE_EMPLOYEE")) {
+                window.location.replace("/employee");
+            } else {
+                window.location.replace("/student");
+            }
+
+        } catch (err) {
+            setError(err.message);
         }
     };
 
     return (
         <div className={cx("login-container")}>
+            <img
+                src="https://actvn.edu.vn/Images/actvn_big_icon.png"
+                alt="Logo"
+            ></img>
+            <h3>ĐĂNG NHẬP</h3>
             <form onSubmit={handleLogin}>
                 <div>
                     <label htmlFor="username">Tài Khoản</label>
@@ -59,7 +108,7 @@ const Login = () => {
                         required
                     />
                 </div>
-                {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+                {error && <p style={{ color: 'red' }}>{error}</p>}
                 <button type="submit">Đăng Nhập</button>
             </form>
         </div>

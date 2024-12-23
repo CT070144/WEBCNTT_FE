@@ -87,12 +87,7 @@ function PostDetail() {
         return "https://cdn-icons-png.flaticon.com/512/2246/2246713.png"; // Icon mặc định
     };
 
-    const linkify = (text) => {
-        const urlRegex = /https?:\/\/[^\s]+/g;
-        return text.replace(urlRegex, (url) => {
-            return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: blue;">${url}</a>`;
-        });
-    };
+
 
     return (
         <div className={cx("container")}>
@@ -103,7 +98,7 @@ function PostDetail() {
                     {post.author} | {post.create_at}
                 </p>
 
-                <pre className={cx("content-detail")} dangerouslySetInnerHTML={{ __html: linkify(post.content) }}></pre>
+                <pre className={cx("content-detail")} dangerouslySetInnerHTML={{ __html: post.content }}></pre>
 
                 {/* Phần danh sách file */}
                 <div className={cx("files")}>

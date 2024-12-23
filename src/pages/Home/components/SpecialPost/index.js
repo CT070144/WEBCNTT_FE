@@ -7,20 +7,20 @@ import styles from "./SpecialPost.module.scss";
 import React, { useRef } from "react";
 import { useState, useEffect } from "react";
 import Card from "~/components/Card";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function SpecialPost() {
 
     const url = "http://localhost:8084";
 
-
     const cx = classNames.bind(styles);
-
 
     let sliderRef = useRef();
     const next = () => {
         sliderRef.current.slickNext();
     };
+
+    const navigate = useNavigate();
 
     const previous = () => {
         sliderRef.current.slickPrev();
@@ -39,21 +39,27 @@ function SpecialPost() {
     const [arr, setArr] = useState([]);
 
     useEffect(() => {
-        // Thay đường dẫn này bằng API thực của bạn
-        fetch(url + "/api/posts/latest", {
+        fetch(url + "/api/public/posts/latest", {
             method: 'GET'
         })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Request failed with status: ' + response.status);
+                }
+                return response.json();  // Chỉ parse JSON khi status là OK
+            })
             .then(data => {
-                // Tạo URL từ Blob
                 setArr(data);
             })
-            .catch(err => console.error('Error fetching:', err));
-    }, []);
+            .catch(err => {
+                console.error('Error fetching posts:', err);
+                alert('Lỗi khi tải dữ liệu: ' + err.message);
+            });
+    }, [navigate]);
 
     return (
         <div className={cx('post-special')}>
-            <h1 className={cx('title')}>Bài viết mới nhất</h1>
+            <h1 className={cx('title')}>BÀI VIẾT MỚI NHẤT</h1>
             <div className={cx('posts-item')}>
                 <i className={cx("fa-solid fa-angle-left")} onClick={previous}></i>
                 <Slider ref={sliderRef} className={cx('slider')} {...setting}>

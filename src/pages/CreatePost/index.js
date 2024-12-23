@@ -12,7 +12,6 @@ function CreatePost() {
     const [formData, setFormData] = useState({
         title: '',
         content: '',
-        author_id: '',
     });
     const [files, setFiles] = useState([]); // Lưu danh sách file
     const [thumbnail, setThumbnail] = useState(null); // Lưu file ảnh tiêu đề
@@ -31,8 +30,41 @@ function CreatePost() {
 
             [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
             [{ 'font': [] }], // Các nút chọn Heading 1, 2, 3
-            ['clean'], // Nút xóa định dạng
+            ['clean'],
+            // Nút xóa định dạng
         ]
+    };
+
+
+    const handleImageUpload = async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        try {
+            // Gửi ảnh lên server và lấy URL ảnh
+            const response = await fetch("http://localhost:8084/uploadImg", {
+                method: "POST",
+                body: formData,
+
+            });
+            if (!response.ok) {
+                throw new Error('Upload failed');
+            }
+
+            // Nhận URL và ID ảnh từ server
+            const data = await response.json();
+
+            console.log(data);
+
+            // Chèn ảnh vào Quill với thuộc tính data-id
+            const quill = editorRef.current.getEditor();
+            const range = quill.getSelection(); // Lấy vị trí chèn ảnh
+            const image = `<img src="${"http://localhost:8084" + data.downloadUrl}" data-id="${data.id}"/>`; // Tạo thẻ <img> với data-id
+
+            // Chèn ảnh vào vị trí con trỏ
+            quill.clipboard.dangerouslyPasteHTML(range.index, image);
+        } catch (error) {
+            console.error('Error uploading image:', error);
+        }
     };
 
     const editorStyle = {
@@ -79,7 +111,6 @@ function CreatePost() {
         const bodyData = new FormData();
         bodyData.append('title', formData.title);
         bodyData.append('content', formData.content);
-        bodyData.append('author_id', formData.author_id);
 
         const allFiles = thumbnail ? [thumbnail, ...files] : files;
 
@@ -87,9 +118,14 @@ function CreatePost() {
             bodyData.append('file', file, file.name);
         });
 
+        const token = localStorage.getItem("auth_token")
+
         fetch('http://localhost:8084/api/posts', {
             method: 'POST',
             body: bodyData,
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
         })
             .then((response) => {
                 if (!response.ok) {
@@ -155,23 +191,16 @@ function CreatePost() {
                         theme="snow"   // Sử dụng theme snow
                         value={formData.content}
                         onChange={handleEditorChange}  // Xử lý thay đổi nội dung
-                        modules={modules}  // Sử dụng các module cơ bản
+                        modules={modules}// Sử dụng các module cơ bản
                         placeholder="Nhập nội dung bài viết ở đây..."  // Placeholder cho editor
                         style={editorStyle}  // Áp dụng CSS cho editor để không có định dạng mặc định
                     />
-                </div>
-                <br />
-                <label className={cx('label')}>
-                    Author ID:
                     <input
-                        type="text"
-                        name="author_id"
-                        value={formData.author_id}
-                        onChange={handleInputChange}
-                        required
-                        className={cx('input')}
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleImageUpload(e.target.files[0])}
                     />
-                </label>
+                </div>
 
                 <br />
                 <label className={cx('custom-file-label')}>

@@ -4,9 +4,20 @@ import { DefaultLayout } from "~/components/Layouts";
 import { Fragment } from "react";
 import ScrollToTop from "~/components/ScrollToTop";
 import { AuthProvider } from "./Authentication/AuthContext";
-
+import { useEffect } from "react";
 
 function App() {
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/firebase-messaging-sw.js')
+        .then((registration) => {
+          console.log('Service Worker registered', registration);
+        })
+        .catch((error) => {
+          console.error('Service Worker registration failed', error);
+        });
+    }
+  }, [])
   return (
     <AuthProvider>
       <Router>
@@ -35,9 +46,9 @@ function App() {
             })}
 
             {privateRoutes.map((route, index) => {
-              const authToken = JSON.parse(localStorage.getItem('auth_token'));
-              const userRole = authToken ? authToken.role : null;
-
+              const userString = localStorage.getItem('user');
+              const user = JSON.parse(userString);
+              const userRole = user ? user.roles : null;
               let Layout = DefaultLayout;
               if (route.layout) {
                 Layout = route.layout;
@@ -50,8 +61,8 @@ function App() {
                   key={index}
                   path={route.path}
                   element={(
-                    authToken ? (
-                      route.allowedRole.includes(userRole) ? (
+                    userString ? (
+                      userRole.some(role => (route.allowedRole.includes(role))) ? (
                         <Layout>
                           <Element />
                         </Layout>
