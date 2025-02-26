@@ -2,6 +2,10 @@
 .container {
     margin: 20px;
     font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .title {
@@ -12,6 +16,7 @@
 
 .form {
     max-width: 100%;
+    width: 80%;
     background-color: #f9f9f9;
     padding: 20px;
     border: 1px solid #ddd;
@@ -42,7 +47,7 @@
 
 /* Button */
 .create-button {
-    width: 100%;
+    width: 50%;
     padding: 10px;
     background-color: #007bff;
     color: white;

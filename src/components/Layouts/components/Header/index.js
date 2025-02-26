@@ -56,14 +56,7 @@ function Header() {
       </div>
 
 
-      {!user && (
-        <div className={cx("options")}>
-          <Link className={cx('login-button')} to={"/login"}>
-            Login
-          </Link>
-        </div>
-      )
-      }
+
 
       {/* {user && user.role === 'admin' && <p>Đây là trang dành cho Admin!</p>}
       {user && user.role === 'student' && <p>Đây là trang dành cho Học Sinh!</p>}

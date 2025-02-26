@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from "react";
 import classNames from "classnames/bind";
 import styles from "./EmployeeManagement.module.scss";
+import { Button, DatePicker, Divider, Form, Input, Select, Space, Table, Upload } from "antd";
+import Column from "antd/es/table/Column";
+import { Option } from "antd/es/mentions";
+import { UploadOutlined } from "@ant-design/icons";
 
 const cx = classNames.bind(styles);
+const url = "http://localhost:8084"
 
 function EmployeeManagement() {
     const [employees, setEmployees] = useState([]);
+    const token = localStorage.getItem("auth_token");
     const [pagination, setPagination] = useState({
         currentPage: 0,
         totalPages: 0,
@@ -26,7 +32,7 @@ function EmployeeManagement() {
     const apiURL = "http://localhost:8084/api/nhanvien";
 
     // Fetch danh sách nhân viên
-    const fetchEmployees = async (page = 0) => {
+    const fetchEmployees = async (page) => {
         try {
             const token = localStorage.getItem("auth_token");
             const response = await fetch(`${apiURL}?page=${page}&size=${pagination.pageSize}`, {
@@ -45,7 +51,7 @@ function EmployeeManagement() {
     };
 
     useEffect(() => {
-        fetchEmployees();
+        fetchEmployees(0);
     }, []);
 
     // Xóa nhân viên
@@ -53,7 +59,7 @@ function EmployeeManagement() {
         if (!window.confirm("Bạn có chắc chắn muốn xóa nhân viên này?")) return;
 
         try {
-            const token = localStorage.getItem("auth_token");
+
             const response = await fetch(`${apiURL}/${idUser}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` },
@@ -68,6 +74,7 @@ function EmployeeManagement() {
             alert("Lỗi khi xóa nhân viên!");
         }
     };
+
 
     // Thêm nhân viên
     const handleAddEmployee = () => {
@@ -120,136 +127,214 @@ function EmployeeManagement() {
         }
     };
 
-    // Chuyển trang
-    const handlePageChange = (newPage) => {
-        fetchEmployees(newPage);
+    const onFinish = async (values) => {
+        const formData = new FormData();
+
+        // Thêm các trường dữ liệu từ form
+        formData.append("maNhanVien", values.maNhanVien); // Tên sự kiện
+        formData.append("tenNhanVien", values.fullname); // Mô tả
+        formData.append("gioiTinh", values.gender); // Địa điểm
+        formData.append("ngaySinh", values.dob.format("YYYY-MM-DD")); // Ngày bắt đầu
+        formData.append("userName", values.username);
+        formData.append("maPhongBan", values.phongBan); // Ngày kết thúc
+        // Xử lý file upload
+        if (values.avatar && values.avatar.length > 0) {
+            formData.append("file", values.avatar[0].originFileObj);
+        }
+        // Gửi FormData qua Fetch API
+        try {
+            const response = await fetch("http://localhost:8084/api/nhanvien", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                alert("Thêm nhân viên thành công")
+            } else {
+                console.error("Failed:", response.statusText);
+            }
+            fetchEmployees(pagination.currentPage)
+        } catch (error) {
+            console.error("Error:", error);
+        }
     };
 
+    const [form] = Form.useForm();
+    const normFile = (e) => {
+        console.log('Upload event:', e);
+        if (Array.isArray(e)) {
+            return e;
+        }
+        return e?.fileList;
+    };
     return (
         <div className={cx("employee-management")}>
             <button onClick={handleAddEmployee} className={cx("add-button")}>Thêm Nhân Viên</button>
 
             {/* Danh sách nhân viên */}
-            <div className={cx("employee-list")}>
-                {employees.map((employee) => (
-                    <div key={employee.idUser} className={cx("employee-card")}>
-                        <img
-                            src={`http://localhost:8084${employee.avaFileCode}`}
-                            alt={employee.tenNhanVien}
-                            className={cx("avatar")}
-                        />
-                        <h3>{employee.tenNhanVien}</h3>
-                        <p><strong>Mã NV:</strong> {employee.maNhanVien}</p>
-                        <p><strong>Chức vụ:</strong> {employee.chucVu}</p>
-                        <p><strong>Phòng ban:</strong> {employee.phongBan.tenPhongBan}</p>
-                        <p><strong>Ngày sinh:</strong> {employee.ngaySinh}</p>
-                        <p><strong>Số điện thoại:</strong> {employee.dienThoai}</p>
-                        <p><strong>Môn giảng dạy chính:</strong> {employee.monGiangDayChinh?.tenMonHoc || "Không có"}</p>
-
-
-                        {/* Môn học liên quan */}
-                        <div className={cx("related-courses")}>
-                            <h4>Các môn liên quan:</h4>
-                            <ul>
-                                {employee.cacMonLienQuan.map((mon, index) => (
-                                    <li key={index}>{mon.tenMonHoc}</li>
-                                ))}
-                            </ul>
-                        </div>
-
-                        <div className={cx("actions")}>
-                            <button onClick={() => handleEditEmployee(employee)} className={cx("edit-button")}>
-                                Sửa
-                            </button>
-                            <button onClick={() => handleDeleteEmployee(employee.idUser)} className={cx("delete-button")}>
-                                Xóa
-                            </button>
-                        </div>
+            <Table dataSource={employees}
+                pagination={{
+                    position: "bottom",
+                    align: "center",
+                    onChange: (page) => {
+                        fetchEmployees(page - 1);
+                    },
+                    pageSize: 5,
+                }}
+            >
+                <Column title="Họ và tên" render={(_, record) => (
+                    <div style={{
+                        display: "flex",
+                        alignItems: "center"
+                    }}>
+                        <img style={{ width: "50px", height: "50px", objectFit: "cover", marginRight: "10px", borderRadius: "50%" }} src={url + record.avaFileCode} alt=""></img>
+                        <p>{record.tenNhanVien}</p>
                     </div>
-                ))}
-            </div>
-
-            {/* Phân trang */}
-            <div className={cx("pagination")}>
-                <button
-                    onClick={() => handlePageChange(pagination.currentPage - 1)}
-                    disabled={pagination.currentPage === 0}
-                    className={cx("pagination-button")}
-                >
-                    Trang trước
-                </button>
-                <span className={cx("pagination-info")}>
-                    Trang {pagination.currentPage + 1} / {pagination.totalPages}
-                </span>
-                <button
-                    onClick={() => handlePageChange(pagination.currentPage + 1)}
-                    disabled={pagination.currentPage + 1 >= pagination.totalPages}
-                    className={cx("pagination-button")}
-                >
-                    Trang sau
-                </button>
-            </div>
+                )} key="tenNhanVien"></Column>
+                <Column title="Mã nhân viên" dataIndex="maNhanVien" key="maNhanVien"></Column>
+                <Column title="Ngày Sinh" dataIndex="ngaySinh" key="ngaySinh"></Column>
+                <Column title="Địa chỉ" dataIndex="diaChi" key="diaChi"></Column>
+                <Column title="Chức vụ" dataIndex="chucVu" key="chucVu"></Column>
+                <Column
+                    title="Action"
+                    key="action"
+                    render={(_, record) => (
+                        <Space size="middle">
+                            <Button>Sửa</Button>
+                            <Button>Xóa</Button>
+                        </Space>
+                    )}
+                />
+            </Table>
 
             {/* Modal Thêm/Sửa */}
             {showForm && (
                 <div className={cx("form-overlay")}>
                     <div className={cx("form-container")}>
-                        <h3>{editMode ? "Chỉnh Sửa Nhân Viên" : "Thêm Nhân Viên"}</h3>
-                        <input
-                            type="text"
-                            placeholder="Tên Nhân Viên"
-                            value={currentEmployee.tenNhanVien}
-                            onChange={(e) => setCurrentEmployee({ ...currentEmployee, tenNhanVien: e.target.value })}
-                        />
-                        <input
-                            type="text"
-                            placeholder="Mã Nhân Viên"
-                            value={currentEmployee.maNhanVien}
-                            onChange={(e) => setCurrentEmployee({ ...currentEmployee, maNhanVien: e.target.value })}
-                        />
-                        <input
-                            type="date"
-                            value={currentEmployee.ngaySinh}
-                            onChange={(e) => setCurrentEmployee({ ...currentEmployee, ngaySinh: e.target.value })}
-                        />
-                        <input
-                            type="text"
-                            placeholder="Giới tính"
-                            value={currentEmployee.gioiTinh}
-                            onChange={(e) => setCurrentEmployee({ ...currentEmployee, gioiTinh: e.target.value })}
-                        />
-                        <input
-                            type="text"
-                            placeholder="Số điện thoại"
-                            value={currentEmployee.dienThoai}
-                            onChange={(e) => setCurrentEmployee({ ...currentEmployee, dienThoai: e.target.value })}
-                        />
-                        <input
-                            type="text"
-                            placeholder="Địa chỉ"
-                            value={currentEmployee.diaChi}
-                            onChange={(e) => setCurrentEmployee({ ...currentEmployee, diaChi: e.target.value })}
-                        />
-                        <input
-                            type="text"
-                            placeholder="Phòng ban"
-                            value={currentEmployee.phongBan?.tenPhongBan || ""}
-                            onChange={(e) => setCurrentEmployee({ ...currentEmployee, phongBan: { ...currentEmployee.phongBan, tenPhongBan: e.target.value } })}
-                        />
-                        <input
-                            type="text"
-                            placeholder="Chức vụ"
-                            value={currentEmployee.chucVu}
-                            onChange={(e) => setCurrentEmployee({ ...currentEmployee, chucVu: e.target.value })}
-                        />
-                        <input
-                            type="text"
-                            placeholder="Môn giảng dạy chính"
-                            value={currentEmployee.monGiangDayChinh?.tenMonHoc || ""}
-                            onChange={(e) => setCurrentEmployee({ ...currentEmployee, monGiangDayChinh: { ...currentEmployee.monGiangDayChinh, tenMonHoc: e.target.value } })}
-                        />
-                        <button onClick={handleSaveEmployee} className={cx("save-button")}>Lưu</button>
-                        <button onClick={() => setShowForm(false)} className={cx("cancel-button")}>Hủy</button>
+                        <Divider orientation="center"><h2>Thêm nhân viên mới</h2></Divider>
+                        <Form
+                            form={form}
+                            style={{
+                                maxWidth: 600,
+                            }}
+                            className={cx("form")}
+                            onFinish={onFinish}>
+                            <Form.Item
+                                label="Avatar"
+                                name="avatar"
+                                valuePropName="fileList"
+                                getValueFromEvent={normFile}
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please input!',
+                                    },
+                                ]}
+                            >
+                                <Upload name="doc" >
+                                    <Button icon={<UploadOutlined />}>Click to upload</Button>
+                                </Upload>
+                            </Form.Item>
+                            <Form.Item
+                                label="Mã nhân viên"
+                                name="maNhanVien"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please input!',
+                                    },
+                                ]}
+                            >
+                                <Input
+                                />
+                            </Form.Item>
+                            <Form.Item
+                                label="Username"
+                                name="username"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please input!',
+                                    },
+                                ]}
+                            >
+                                <Input
+                                />
+                            </Form.Item>
+                            <Form.Item
+                                label="Họ tên"
+                                name="fullname"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please input!',
+                                    },
+                                ]}
+                            >
+                                <Input
+                                />
+                            </Form.Item>
+                            <Form.Item
+                                label="Ngày sinh"
+                                name="dob"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please input!',
+                                    },
+                                ]}
+                            >
+                                <DatePicker />
+                            </Form.Item>
+                            <Form.Item
+                                label="Giới tính"
+                                name="gender"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please input!',
+                                    },
+                                ]}
+                            >
+                                <Select>
+                                    <Option value="Nam">Nam</Option>
+                                    <Option value="Nữ">Nữ</Option>
+                                </Select>
+                            </Form.Item>
+                            <Form.Item
+                                label="Phòng ban"
+                                name="phongBan"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please input!',
+                                    },
+                                ]}
+                            >
+                                <Select>
+                                    <Option value="CNTT">Công nghệ thông tin</Option>
+                                    <Option value="ATTT">An toàn thông tin</Option>
+                                    <Option value="DTVT">Điện tử viễn thông</Option>
+                                </Select>
+                            </Form.Item>
+
+                            <Form.Item
+                                wrapperCol={{
+                                    offset: 6,
+                                    span: 16,
+                                }}
+                            >
+                                <Button style={{ marginRight: "18px" }} type="primary" htmlType="submit">
+                                    Submit
+                                </Button>
+                                <Button onClick={() => setShowForm(false)}>
+                                    Cancel
+                                </Button>
+                            </Form.Item>
+                        </Form>
                     </div>
 
                 </div>

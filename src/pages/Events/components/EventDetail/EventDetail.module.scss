@@ -7,6 +7,14 @@
     margin: 30px auto;
     font-family: 'Roboto', sans-serif;
 
+    img {
+        width: 100%;
+        height: fit-content;
+        object-fit: cover;
+        height: 500px;
+        margin-bottom: 20px;
+    }
+
     h1 {
         font-size: 28px;
         color: #333;

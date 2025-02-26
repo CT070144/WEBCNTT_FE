@@ -63,19 +63,74 @@ function Forum() {
 
     const fetchRecentPosts = async (discussionId) => {
         try {
-            const response = await fetch(`${urlApi}/api/discussions/latest`, {
+            const response = await fetch(`${urlApi}/api/discussions`, {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
             const data = await response.json();
-            setRecentPosts(data);
+            setRecentPosts(data.content);
 
         } catch (error) {
             console.error("Error fetching recent posts:", error);
         }
     };
+
+    const handleVote = async (discussionId, voteType) => {
+        // Lưu trạng thái ban đầu
+        const prevDiscussions = [...discussions];
+
+        // Cập nhật state trước
+        setDiscussions((prevDiscussions) =>
+            prevDiscussions.map((discussion) =>
+                discussion.discussionId === discussionId
+                    ? {
+                        ...discussion,
+                        voteDTO: {
+                            ...discussion.voteDTO,
+                            upVotes:
+                                voteType === "UP"
+                                    ? discussion.voteDTO.upVotes + 1
+                                    : discussion.voteDTO.upVotes,
+                            downVotes:
+                                voteType === "DOWN"
+                                    ? discussion.voteDTO.downVotes + 1
+                                    : discussion.voteDTO.downVotes,
+                        },
+                    }
+                    : discussion
+            )
+        );
+
+        // Gửi yêu cầu API
+        try {
+            const formData = new FormData();
+            formData.append("voteType", voteType);
+
+            const response = await fetch(`${urlApi}/api/discussions/${discussionId}/votes`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                body: formData,
+            });
+
+            if (!response.ok) {
+                // Nếu lỗi, khôi phục trạng thái ban đầu
+                setDiscussions(prevDiscussions);
+
+                fetchDiscussionDetails(discussionId);
+            }
+        } catch (error) {
+            console.error("Error during voting:", error);
+            // Khôi phục trạng thái nếu lỗi
+            setDiscussions(prevDiscussions);
+        }
+    };
+
+
+
 
     const fetchDiscussionDetails = async (discussionId) => {
         try {
@@ -95,9 +150,52 @@ function Forum() {
         }
     };
 
+    const handleAnswerVote = async (answerId, voteType) => {
+        // Cập nhật trước vào state
+        setAnswers((prevAnswers) =>
+            prevAnswers.map((answer) =>
+                answer.answerId === answerId
+                    ? {
+                        ...answer,
+                        voteDTO: {
+                            ...answer.voteDTO,
+                            upVotes:
+                                voteType === "UP"
+                                    ? answer.voteDTO.upVotes + 1
+                                    : answer.voteDTO.upVotes,
+                            downVotes:
+                                voteType === "DOWN"
+                                    ? answer.voteDTO.downVotes + 1
+                                    : answer.voteDTO.downVotes,
+                        },
+                    }
+                    : answer
+            )
+        );
+
+        // Sau đó gửi yêu cầu API
+        try {
+            const formData = new FormData();
+            formData.append("voteType", voteType);
+
+            const response = await fetch(`${urlApi}/api/answers/${answerId}/votes`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                body: formData,
+            });
+
+            if (!response.ok) {
+                console.error("Failed to vote on answer");
+            }
+        } catch (error) {
+            console.error("Error during voting on answer:", error);
+        }
+    };
+
     useEffect(() => {
         fetchDiscussions(0);
-        fetchRecentPosts();
     }, []);
 
     const handleScroll = () => {
@@ -120,29 +218,36 @@ function Forum() {
 
     return (
         <div className={cx("container")}>
-            <h1>KMA Forum</h1>
+            <div className={cx("functions")}>
+
+            </div>
             <div className={cx("discussion-layout")}>
                 <div className={cx("discussion-list")}>
                     <div className={cx("discussion-all")}>
                         {discussions.map((discussion) => (
-                            <div key={discussion.discussionId} className={cx("discussion-item")}>
+                            discussion.discussionStatus === "APPROVED" && <div key={discussion.discussionId} className={cx("discussion-item")}>
                                 <div className={cx("discussion-point")}>
-                                    Point: {discussion.voteDTO.upVotes - discussion.voteDTO.downVotes}
+                                    <div className={cx("votes")}>
+                                        {discussion.voteDTO.upVotes + discussion.voteDTO.downVotes} votes
+                                    </div>
+                                    <div className={cx("answer")}>
+                                        {discussion.answerQuantity} Answers
+                                    </div>
+                                    <div className={cx("point")}>
+                                        {discussion.voteDTO.upVotes - discussion.voteDTO.downVotes} score
+                                    </div>
                                 </div>
-                                <div>
+                                <div className={cx("discussion-info")}>
+
+                                    <div className={cx("discussion-title")} onClick={() => fetchDiscussionDetails(discussion.discussionId)}>{discussion.title}</div>
+                                    <div className={cx("discussion-content")}>{discussion.content}</div>
                                     <div className={cx("discussion-header")}>
                                         <span className={cx("discussion-author")}>
-                                            {discussion.authorName}
+                                            <img src={"http://localhost:8084" + discussion.author_DTO.avaFileCode}></img>
+                                            {discussion.author_DTO.name} asked at
+                                            <span>{discussion.createAt.split('-').reverse().join('/')}</span>
                                         </span>
                                     </div>
-                                    <div className={cx("discussion-title")}>{discussion.title}</div>
-                                    <button
-                                        className={cx("detail-button")}
-                                        onClick={() => fetchDiscussionDetails(discussion.discussionId)}
-                                    >
-                                        Xem chi tiết
-                                    </button>
-                                    <span>{discussion.answerQuantity} Answers</span>
                                 </div>
                             </div>
                         ))}
@@ -153,17 +258,6 @@ function Forum() {
                     )}
                 </div>
 
-                <div className={cx("recent-posts")}>
-                    <div className={cx("recent-post-title")}>Recent Posts</div>
-                    {recentPosts.map((post) => (
-                        <div key={post.discussionId} className={cx("recent-post-item")}>
-                            <div className={cx("recent-post-item-title")}>{post.title}</div>
-                            <div className={cx("recent-post-item-date")}>
-                                {new Date(post.createAt).toLocaleDateString()}
-                            </div>
-                        </div>
-                    ))}
-                </div>
             </div>
 
             {isModalOpen && selectedDiscussion && (
@@ -173,10 +267,17 @@ function Forum() {
                             &times;
                         </span>
                         <div className={cx("vote")}>
-                            <i className="fa-solid fa-caret-up"></i>
+                            <i
+                                className="fa-solid fa-caret-up"
+                                onClick={() => handleVote(selectedDiscussion.discussionId, "UP")}
+                            ></i>
                             <span>{selectedDiscussion.voteDTO.upVotes - selectedDiscussion.voteDTO.downVotes}</span>
-                            <i className="fa-solid fa-caret-down"></i>
+                            <i
+                                className="fa-solid fa-caret-down"
+                                onClick={() => handleVote(selectedDiscussion.discussionId, "DOWN")}
+                            ></i>
                         </div>
+
                         <div className={cx("content")}>
                             <div className={cx("author-info")}>
                                 <img
@@ -202,9 +303,15 @@ function Forum() {
                                     {answers.map((answer) =>
                                     (<div className={cx("answer-item")}>
                                         <div className={cx("vote")}>
-                                            <i className="fa-solid fa-caret-up"></i>
+                                            <i
+                                                className="fa-solid fa-caret-up"
+                                                onClick={() => handleAnswerVote(answer.answerId, "UP")}
+                                            ></i>
                                             <span>{answer.voteDTO.upVotes - answer.voteDTO.downVotes}</span>
-                                            <i className="fa-solid fa-caret-down"></i>
+                                            <i
+                                                className="fa-solid fa-caret-down"
+                                                onClick={() => handleAnswerVote(answer.answerId, "DOWN")}
+                                            ></i>
                                         </div>
                                         <div>
                                             <div className={cx("answer-author")}>
@@ -213,8 +320,8 @@ function Forum() {
                                             </div>
                                             <div className={cx("answer-content")}>{answer.content}</div>
                                         </div>
-
-                                    </div>)
+                                    </div>
+                                    )
                                     )}
                                 </div>
 

@@ -9,7 +9,6 @@
 
     img {
         width: 50%;
-        margin: 20px 0;
         object-fit: fill;
     }
 }
@@ -34,6 +33,16 @@
     .contents {
         margin-top: 20px;
 
+        p,
+        h1,
+        h2,
+        h3,
+        span,
+        ul,
+        li {
+            line-height: 1.9;
+        }
+
         .profile {
             line-height: 1.6;
             margin-bottom: 10px;
@@ -53,30 +62,43 @@
         }
 
         .content-detail {
-            font-family: Arial, sans-serif;
-            font-size: 16px;
-            line-height: 1.5;
-            white-space: pre-wrap;
-            text-indent: 2em;
-            margin: 0 auto;
-            width: 80%;
+            // font-family: Arial, sans-serif;
+            // font-size: 16px;
+            // line-height: 1.5;
+            // white-space: pre-wrap;
+            // text-indent: 2em;
+            // margin: 0 auto;
+            // width: 80%;
 
-            img {
-                display: block;
-                /* Đảm bảo hình ảnh căn giữa */
-                margin: 0 auto;
-                width: 600px;
+            // img {
+            //     display: block;
+            //     /* Đảm bảo hình ảnh căn giữa */
+            //     margin: 0 auto;
+            //     width: 600px;
+            // }
+
+            // /* Thụt lề đầu dòng */
+            // a {
+            //     color: blue;
+            //     text-decoration: underline;
+
+            //     &:hover {
+            //         color: darkblue;
+            //     }
+            // }
+
+            .container-wrapper {
+                position: relative;
+                /* Để các phần tử con sử dụng absolute */
+                width: 100%;
+                height: auto;
+                box-sizing: border-box;
+                border: 1px solid #ddd;
+                /* Hiển thị đường viền nếu cần kiểm tra */
             }
 
-            /* Thụt lề đầu dòng */
-            a {
-                color: blue;
-                text-decoration: underline;
 
-                &:hover {
-                    color: darkblue;
-                }
-            }
+
         }
     }
 

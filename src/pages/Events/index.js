@@ -12,7 +12,7 @@ function Events() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch(url + "/api/sukien?page=0", {
+        fetch(url + "/api/public/sukien?page=0", {
             method: 'GET'
         })
             .then(response => response.json())

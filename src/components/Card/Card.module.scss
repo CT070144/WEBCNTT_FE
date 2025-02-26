@@ -8,10 +8,10 @@
         left: 10%;
         top: 8%;
         width: 80%;
-        height: 85%;
+        height: 83%;
         position: relative;
         background-color: #fff;
-        border-radius: 10px;
+        border-radius: 2px;
         overflow: hidden;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         transition: transform 0.3s ease-in-out;
@@ -58,9 +58,10 @@
 
         h3 {
             display: -webkit-box;
+            -webkit-line-clamp: 2;
             line-clamp: 2;
             -webkit-box-orient: vertical;
-            height: 42px;
+            height: 44px;
             font-size: 19px;
             margin: 10px 0;
             color: #333;
@@ -70,8 +71,9 @@
 
         p {
             margin: 5px 0;
-            color: #555;
+            color: black;
             display: -webkit-box;
+            -webkit-line-clamp: 2;
             line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
@@ -80,6 +82,22 @@
             i {
                 font-size: 15px;
                 padding-right: 10px;
+            }
+
+            h1,
+            strong,
+            h2,
+            h3,
+            h4 {
+
+                font-size: 16px;
+                color: black;
+                margin-bottom: 15px;
+                word-wrap: break-word;
+                /* Cắt từ dài nếu cần thiết */
+                font-weight: normal;
+                /* Loại bỏ bold */
+                font-family: Arial, sans-serif;
             }
 
 

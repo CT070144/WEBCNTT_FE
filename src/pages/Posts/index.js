@@ -3,6 +3,9 @@ import classNames from "classnames/bind";
 import styles from "./Posts.module.scss";
 import ReactQuill from "react-quill";
 import { AuthContext } from "~/Authentication/AuthContext";
+import { Divider, List, Button } from "antd";
+import { Link } from "react-router-dom";
+
 
 function Posts() {
     const url = "http://localhost:8084"; // URL API của bạn
@@ -26,6 +29,7 @@ function Posts() {
             ['clean'], // Nút xóa định dạng
         ]
     };
+    const token = localStorage.getItem("auth_token")
 
     const [posts, setPosts] = useState([]);
     const [page, setPage] = useState(0);
@@ -36,10 +40,36 @@ function Posts() {
     const [postToDelete, setPostToDelete] = useState(null);
     const [postToUpdate, setPostToUpdate] = useState(null);
     const [fileData, setFileData] = useState([]);
+    const [myPosts, setMyPosts] = useState([]);
 
     const size = 10;
 
     console.log(posts)
+
+    const fetchMyPosts = async (page) => {
+        try {
+            const response = await fetch(`${url}/api/public/posts?page=${page}`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            })
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch my posts")
+            }
+            const data = await response.json();
+            const arr = []
+            data.content.map((item) => {
+                arr.push(item)
+            })
+            setMyPosts(arr);
+
+
+        } catch (error) {
+            console.error("Error fetching posts:", error);
+        }
+    }
 
     const handleEditorChange = (value) => {
         setPostToUpdate({ ...postToUpdate, content: value }); // Cập nhật nội dung vào content
@@ -48,7 +78,7 @@ function Posts() {
     const fetchPosts = async (currentPage) => {
         setLoading(true);
         try {
-            const response = await fetch(`${url}/api/posts?page=${currentPage}&size=${size}`);
+            const response = await fetch(`${url}/api/public/posts?page=${currentPage}&size=${size}`);
             if (!response.ok) {
                 throw new Error(`Failed to fetch posts: ${response.status}`);
             }
@@ -118,7 +148,7 @@ function Posts() {
 
 
     const openUpdateModal = async (post) => {
-        const response = await fetch(`${url}/api/posts/${post.postId}`, {
+        const response = await fetch(`${url}/api/public/posts/${post.postId}`, {
             method: "GET",
         });
 
@@ -256,6 +286,7 @@ function Posts() {
 
     useEffect(() => {
         fetchPosts(0);
+        fetchMyPosts(0);
     }, []);
 
     const getFileIcon = (contentType) => {
@@ -276,58 +307,63 @@ function Posts() {
 
     return (
         <div className={cx("container")}>
-            <h2 className={cx("title")}>Danh Sách Bài Viết</h2>
-
             <div className={cx("posts-list")}>
+                <Divider orientation="left"><h1>Tất cả bài viết</h1></Divider>
                 {posts.length > 0 ? (
                     posts.map((post) => (
                         <div key={post.postId} className={cx("post-item")}>
-                            <h3 className={cx("post-title")}>{post.title}</h3>
-                            <p className={cx("post-meta")}>
-                                Tác giả: {post.authorName} | Ngày tạo: {post.createAt}
-                            </p>
-                            <p className={cx("post-excerpt")} dangerouslySetInnerHTML={{ __html: post.content }}>
-                            </p>
-                            <div className={cx("actions")}>
-                                <a href={`/posts/${post.postId}`} className={cx("read-more")}>
-                                    Xem chi tiết
-                                </a>
-
-                                {!(user?.roles.includes("ROLE_STUDENT") || user == null) && <div className={cx("UD-buttons")}>
-                                    <button
-                                        className={cx("update-button")}
-                                        onClick={() => openUpdateModal(post)}
-                                    >
-                                        Chỉnh sửa
-                                    </button>
-                                    <button
-                                        className={cx("delete-button")}
-                                        onClick={() => openDeleteModal(post)}
-                                    >
-                                        Xóa
-                                    </button>
-                                </div>}
+                            <div className={cx("post-image")}>
+                                <img src={post.file_dto[0] ? (url + post.file_dto[0].downloadUrl) : "https://actvn.edu.vn/News/GetImage/28237"} alt=""></img>
+                            </div>
+                            <div className={cx("post-content")}>
+                                <Link to={`/posts/${post.postId}`} className={cx("post-title")}>{post.title}</Link>
+                                <p className={cx("post-meta")}>
+                                    Tác giả: {post.authorName} | Ngày tạo: {post.createAt}
+                                </p>
+                                <p className={cx("post-excerpt")} dangerouslySetInnerHTML={{ __html: post.content }}>
+                                </p>
+                                <div className={cx("actions")}>
+                                    <a href={`/posts/${post.postId}`} className={cx("read-more")}>
+                                        Xem chi tiết
+                                    </a>
+                                    {!(user?.roles.includes("ROLE_STUDENT") || user == null) && <div className={cx("UD-buttons")}>
+                                        <Button
+                                            className={cx("update-button")}
+                                            onClick={() => openUpdateModal(post)}
+                                        >
+                                            Chỉnh sửa
+                                        </Button>
+                                        <button
+                                            className={cx("delete-button")}
+                                            onClick={() => openDeleteModal(post)}
+                                        >
+                                            Xóa
+                                        </button>
+                                    </div>}
+                                </div>
                             </div>
                         </div>
                     ))
                 ) : (
                     <p>Không có bài viết nào để hiển thị.</p>
                 )}
+
+                <div className={cx("pagination")}>
+                    {Array.from({ length: totalPages }, (_, index) => (
+                        <button
+                            key={index}
+                            className={cx("page-button", { active: page === index })}
+                            onClick={() => handlePageClick(index)}
+                        >
+                            {index + 1}
+                        </button>
+                    ))}
+                </div>
             </div>
 
             {loading && <p className={cx("loading")}>Đang tải...</p>}
 
-            <div className={cx("pagination")}>
-                {Array.from({ length: totalPages }, (_, index) => (
-                    <button
-                        key={index}
-                        className={cx("page-button", { active: page === index })}
-                        onClick={() => handlePageClick(index)}
-                    >
-                        {index + 1}
-                    </button>
-                ))}
-            </div>
+
 
             {isUpdateModalOpen && (
                 <div className={cx('modal-overlay')}>
@@ -430,6 +466,28 @@ function Posts() {
                     </div>
                 </div>
             )}
+
+            <div className={cx("my-post")}>
+                <Divider orientation="left"><h3>Bài viết mới nhất</h3></Divider>
+                <List
+                    bordered
+                    pagination={{
+                        position: "bottom",
+                        align: "center",
+                        onChange: (page) => {
+                            fetchMyPosts(page - 1);
+                        },
+                        pageSize: 10,
+                    }}
+                    dataSource={myPosts}
+                    renderItem={(item) => (
+                        <List.Item>
+                            <Link to={`/posts/${item.postId}`}>{item.title}</Link>
+                        </List.Item>
+                    )}>
+
+                </List>
+            </div>
         </div>
     );
 }

@@ -14,7 +14,7 @@ function PostDetail() {
     const [pdfPreviewUrl, setPdfPreviewUrl] = useState(null); // Lưu URL file PDF để hiển thị
 
     useEffect(() => {
-        fetch(urlAPI + "/api/posts/" + slug, {
+        fetch(urlAPI + "/api/public/posts/" + slug, {
             method: "GET",
         })
             .then((response) => response.json())
@@ -98,7 +98,10 @@ function PostDetail() {
                     {post.author} | {post.create_at}
                 </p>
 
-                <pre className={cx("content-detail")} dangerouslySetInnerHTML={{ __html: post.content }}></pre>
+                <div className={cx("")} style={{
+                    position: "relative", // Để giữ layout chính xác
+                    width: "100%",
+                }} dangerouslySetInnerHTML={{ __html: post.content }}></div>
 
                 {/* Phần danh sách file */}
                 <div className={cx("files")}>

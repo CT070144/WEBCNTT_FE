@@ -1,6 +1,7 @@
 .post-special {
-    margin-top: 20px;
     text-align: center;
+    margin: 20px auto;
+    width: 85%;
 
     .title {
         width: 100%;
@@ -12,8 +13,6 @@
 }
 
 .posts-item {
-    background-color: rgb(249, 249, 249, 0.7);
-    ;
     width: 100%;
     display: flex;
     justify-content: space-around;

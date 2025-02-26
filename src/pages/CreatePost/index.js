@@ -4,6 +4,7 @@ import 'react-quill/dist/quill.snow.css';
 import classNames from 'classnames/bind';
 import styles from './CreatePost.module.scss';
 import './CreatePost.css'
+import { Editor } from "@tinymce/tinymce-react";
 
 
 function CreatePost() {
@@ -16,6 +17,7 @@ function CreatePost() {
     const [files, setFiles] = useState([]); // Lưu danh sách file
     const [thumbnail, setThumbnail] = useState(null); // Lưu file ảnh tiêu đề
     const [thumbnailPreview, setThumbnailPreview] = useState(null); // Lưu URL preview ảnh tiêu đề
+    const [editorContent, setEditorContent] = useState("");
 
     const modules = {
         toolbar: [
@@ -30,15 +32,18 @@ function CreatePost() {
 
             [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
             [{ 'font': [] }], // Các nút chọn Heading 1, 2, 3
-            ['clean'],
+            ['table'],
             // Nút xóa định dạng
         ]
     };
+
+    const token = localStorage.getItem("auth_token")
 
 
     const handleImageUpload = async (file) => {
         const formData = new FormData();
         formData.append('file', file);
+
         try {
             // Gửi ảnh lên server và lấy URL ảnh
             const response = await fetch("http://localhost:8084/uploadImg", {
@@ -110,7 +115,7 @@ function CreatePost() {
 
         const bodyData = new FormData();
         bodyData.append('title', formData.title);
-        bodyData.append('content', formData.content);
+        bodyData.append('content', editorContent);
 
         const allFiles = thumbnail ? [thumbnail, ...files] : files;
 
@@ -167,6 +172,8 @@ function CreatePost() {
         );
     };
 
+
+
     return (
         <div className={cx('container')}>
             <h2 className={cx('title')}>Tạo Bài Viết Mới</h2>
@@ -186,14 +193,126 @@ function CreatePost() {
 
                 <div className={cx('label')}>
                     Content:
-                    <ReactQuill
-                        ref={editorRef}
-                        theme="snow"   // Sử dụng theme snow
-                        value={formData.content}
-                        onChange={handleEditorChange}  // Xử lý thay đổi nội dung
-                        modules={modules}// Sử dụng các module cơ bản
-                        placeholder="Nhập nội dung bài viết ở đây..."  // Placeholder cho editor
-                        style={editorStyle}  // Áp dụng CSS cho editor để không có định dạng mặc định
+                    <Editor
+                        apiKey="8bg7zb9qu8fvseg9gigmni6bbgp0yu9ce25mvyurt11xf3k4"
+                        initialValue=""
+                        init={{
+                            height: 400,
+                            menubar: "file edit view insert format tools table help",
+                            plugins: [
+                                "advlist",
+                                "autolink",
+                                "lists",
+                                "link",
+                                "image",
+                                "charmap",
+                                "preview",
+                                "anchor",
+                                "searchreplace",
+                                "visualblocks",
+                                "code",
+                                "fullscreen",
+                                "insertdatetime",
+                                "media",
+                                "table",
+                                "code",
+                                "help",
+                                "wordcount",
+                            ],
+                            toolbar:
+                                "undo redo | blocks | " +
+                                "bold italic forecolor | alignleft aligncenter " +
+                                "alignright alignjustify | bullist numlist outdent indent | table |" +
+                                "removeformat | help",
+                            file_picker_callback: (async (callback, value, meta) => {
+                                // Kiểm tra loại file được chọn
+                                if (meta.filetype === "image") {
+                                    // Xử lý tải ảnh
+                                    const input = document.createElement("input");
+                                    input.type = "file";
+                                    input.accept = "image/*";
+                                    input.onchange = async function () {
+                                        const formData = new FormData();
+                                        formData.append("file", input.files[0]);
+
+                                        try {
+                                            // Tải ảnh lên server
+                                            const response = await fetch("http://localhost:8084/uploadImg", {
+                                                method: "POST",
+                                                headers: {
+                                                    "Authorization": `Bearer ${token}`,
+                                                },
+                                                body: formData
+                                            })
+
+                                            const data = await response.json();
+
+                                            if (data) {
+                                                console.log(data)
+                                                const imageUrl = `http://localhost:8084${data.downloadUrl}`; // URL đầy đủ của ảnh
+
+                                                // Gọi callback để chèn ảnh vào editor
+                                                callback(imageUrl, { alt: "Uploaded Image" });
+                                            } else {
+                                                alert("Không thể tải ảnh lên.");
+                                            }
+                                        } catch (error) {
+                                            console.error("Error uploading image", error);
+                                            alert("Không thể tải ảnh lên.");
+                                        }
+
+                                    };
+                                    input.click(); // Mở hộp thoại chọn file
+                                } else if (meta.filetype === "file") {
+                                    // Xử lý tải tệp tin (PDF, Word, Excel...)
+                                    const input = document.createElement("input");
+                                    input.type = "file";
+                                    input.accept = ".pdf,.doc,.docx,.xls,.xlsx"; // Cho phép chọn các tệp tin
+                                    input.onchange = async function () {
+                                        const file = input.files[0];
+                                        if (file) {
+                                            const formData = new FormData();
+                                            formData.append("file", file);
+
+                                            try {
+                                                // Tải ảnh lên server
+                                                const response = await fetch("http://localhost:8084/uploadImg", {
+                                                    method: "POST",
+                                                    headers: {
+                                                        "Authorization": `Bearer ${token}`
+                                                    },
+                                                    body: formData
+                                                })
+
+                                                const data = await response.json();
+
+                                                if (data) {
+                                                    const imageUrl = `http://localhost:8084${data.downloadUrl}`; // URL đầy đủ của ảnh
+
+                                                    // Gọi callback để chèn ảnh vào editor
+                                                    callback(imageUrl, { alt: "Uploaded Image" });
+                                                } else {
+                                                    alert("Không thể tải ảnh lên.");
+                                                }
+                                            } catch (error) {
+                                                console.error("Error uploading image", error);
+                                                alert("Không thể tải ảnh lên.");
+                                            }
+                                        }
+                                    };
+                                    input.click(); // Mở hộp thoại chọn file
+                                } else if (meta.filetype === "link") {
+                                    // Xử lý liên kết (URL)
+                                    const url = prompt("Nhập URL của liên kết:");
+                                    if (url) {
+                                        // Gọi callback để chèn URL vào editor
+                                        callback(url);
+                                    }
+                                }
+                            })
+                        }}
+                        value={editorContent}
+                        onEditorChange={(content) => setEditorContent(content)}
                     />
                     <input
                         type="file"

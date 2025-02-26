@@ -1,8 +1,6 @@
 .container {
     position: relative;
     width: 100%;
-    max-width: 1200px;
-    margin: auto;
     overflow: hidden; // Đảm bảo các phần tử con không "trôi" ra ngoài
 
     .border {
