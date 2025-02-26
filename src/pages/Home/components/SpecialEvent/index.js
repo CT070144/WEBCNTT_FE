@@ -8,7 +8,7 @@ import { useAuth } from "~/Authentication/AuthContext";
 
 function SpecialEvent() {
     const cx = classNames.bind(styles);
-    const url = "http://localhost:8084";
+    const url = "https://web-cntt.onrender.com";
     const { user } = useAuth();
     const [arr, setArr] = useState([]);
     const [loading, setLoading] = useState(true);
