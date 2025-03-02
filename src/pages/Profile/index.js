@@ -26,7 +26,7 @@ const Profile = () => {
             const formData = new FormData();
             const data = formCp.getFieldsValue();
             Object.entries(data).forEach(([key, value]) => formData.append(key, value));
-            const res = await fetch(`${api}/user/${user.accountId}/change_password`, {
+            const res = await fetch(`${url}/user/${user.accountId}/change_password`, {
                 method: "PUT",
                 body: formData,
                 headers: {
