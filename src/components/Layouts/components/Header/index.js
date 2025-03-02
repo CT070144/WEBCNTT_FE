@@ -9,10 +9,11 @@ import { useEffect, useState } from "react";
 function Header() {
   const cx = classNames.bind(styles);
   const { user } = useAuth();
+  const api = process.env.API_URL;
   const token = localStorage.getItem("auth_token")
   const handleLogout = async () => {
     localStorage.clear();
-    await fetch("http://localhost:8084/user/logout", {
+    await fetch(`${api}/user/logout`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${token}`
@@ -83,7 +84,7 @@ function Header() {
           )}
         >
 
-          <img className={cx("avatar")} src={user.avaFileCode != undefined ? ("http://localhost:8084" + user.avaFileCode) : "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"} alt=""></img>
+          <img className={cx("avatar")} src={user.avaFileCode != undefined ? (api + user.avaFileCode) : "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"} alt=""></img>
 
         </Tippy>
       </div>}
