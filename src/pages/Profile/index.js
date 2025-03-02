@@ -8,7 +8,7 @@ import { useAuth } from "~/Authentication/AuthContext";
 const cx = classNames.bind(styles);
 
 const Profile = () => {
-    const url = "http://localhost:8084"; // URL cơ sở
+    const url = process.env.API_URL; // URL cơ sở
     const user = JSON.parse(localStorage.getItem("user"));
     const [formCp] = Form.useForm();
     const [open, setOpen] = useState(false);
@@ -26,7 +26,7 @@ const Profile = () => {
             const formData = new FormData();
             const data = formCp.getFieldsValue();
             Object.entries(data).forEach(([key, value]) => formData.append(key, value));
-            const res = await fetch(`http://localhost:8084/user/${user.accountId}/change_password`, {
+            const res = await fetch(`${api}/user/${user.accountId}/change_password`, {
                 method: "PUT",
                 body: formData,
                 headers: {

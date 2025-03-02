@@ -10,6 +10,7 @@ const CRUDNavbar = () => {
     const [currentItem, setCurrentItem] = useState(null); // Dùng để sửa menu hiện tại
     const [parentId, setParentId] = useState(null); // Dùng để lưu parentId khi tạo submenu
     const [form] = Form.useForm();
+    const api = process.env.API_URL;
 
     const token = localStorage.getItem('auth_token'); // Lấy token từ localStorage
 
@@ -49,7 +50,7 @@ const CRUDNavbar = () => {
     // Hàm lấy dữ liệu từ API
     const fetchApiData = async () => {
         try {
-            const response = await fetch('http://localhost:8084/api/menu_items', {
+            const response = await fetch(api + '/api/menu_items', {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`
@@ -73,7 +74,7 @@ const CRUDNavbar = () => {
                 formData.append('parentId', parentId);
             }
 
-            await fetch('http://localhost:8084/api/menu_items', {
+            await fetch(api + '/api/menu_items', {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -98,7 +99,7 @@ const CRUDNavbar = () => {
             formData.append('title', values.title);
             formData.append('slug', values.slug);
 
-            await fetch(`http://localhost:8084/api/menu_items/${currentItem.id}`, {
+            await fetch(`${api}/api/menu_items/${currentItem.id}`, {
                 method: 'PUT',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -118,7 +119,7 @@ const CRUDNavbar = () => {
     // Hàm xóa menu
     const deleteMenuItem = async (id) => {
         try {
-            await fetch(`http://localhost:8084/api/menu_items/${id}`, {
+            await fetch(`${api}/api/menu_items/${id}`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -160,7 +161,7 @@ const CRUDNavbar = () => {
             formData.append('isDeleted', !isDeletedStatus);
 
             // Gọi API
-            const response = await fetch(`http://localhost:8084/api/menu_items/${id}`, {
+            const response = await fetch(`${api}/api/menu_items/${id}`, {
                 method: 'PATCH',
                 body: formData,
                 headers: {

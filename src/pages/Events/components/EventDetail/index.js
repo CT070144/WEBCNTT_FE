@@ -12,7 +12,7 @@ const EventDetail = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [sinhVienThamGia, setParticipants] = useState([]);
-    const url = "http://localhost:8084"
+    const url = process.env.API_URL;
 
     useEffect(() => {
         // Hàm fetch data
@@ -73,7 +73,7 @@ const EventDetail = () => {
 
         return (
             <div className={cx("event-detail")}>
-                <img src={"http://localhost:8084" + srcImg}></img>
+                <img src={url + srcImg}></img>
                 <h1>{eventName}</h1>
                 <p><strong>Miêu tả:</strong> {description}</p>
                 <p><strong>Thời gian:</strong> {startAt} đến {endAt}</p>

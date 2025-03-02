@@ -8,6 +8,7 @@ import { Editor } from "@tinymce/tinymce-react";
 
 
 function CreatePost() {
+    const api = process.env.API_URL;
     const cx = classNames.bind(styles);
     const editorRef = useRef(null);
     const [formData, setFormData] = useState({
@@ -46,7 +47,7 @@ function CreatePost() {
 
         try {
             // Gửi ảnh lên server và lấy URL ảnh
-            const response = await fetch("http://localhost:8084/uploadImg", {
+            const response = await fetch(api + "/uploadImg", {
                 method: "POST",
                 body: formData,
 
@@ -63,7 +64,7 @@ function CreatePost() {
             // Chèn ảnh vào Quill với thuộc tính data-id
             const quill = editorRef.current.getEditor();
             const range = quill.getSelection(); // Lấy vị trí chèn ảnh
-            const image = `<img src="${"http://localhost:8084" + data.downloadUrl}" data-id="${data.id}"/>`; // Tạo thẻ <img> với data-id
+            const image = `<img src="${api + data.downloadUrl}" data-id="${data.id}"/>`; // Tạo thẻ <img> với data-id
 
             // Chèn ảnh vào vị trí con trỏ
             quill.clipboard.dangerouslyPasteHTML(range.index, image);
@@ -237,7 +238,7 @@ function CreatePost() {
 
                                         try {
                                             // Tải ảnh lên server
-                                            const response = await fetch("http://localhost:8084/uploadImg", {
+                                            const response = await fetch(api + "/uploadImg", {
                                                 method: "POST",
                                                 headers: {
                                                     "Authorization": `Bearer ${token}`,
@@ -276,7 +277,7 @@ function CreatePost() {
 
                                             try {
                                                 // Tải ảnh lên server
-                                                const response = await fetch("http://localhost:8084/uploadImg", {
+                                                const response = await fetch(api + "/uploadImg", {
                                                     method: "POST",
                                                     headers: {
                                                         "Authorization": `Bearer ${token}`

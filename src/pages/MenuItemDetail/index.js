@@ -15,10 +15,11 @@ function MenuItemDetail() {
     const [pageSize, setPageSize] = useState(10); // Số bài viết trên mỗi trang
     const cx = classNames.bind(styles);
     const [menuItem, setMenuItem] = useState(null);
+    const api = process.env.API_URL;
 
     const fetchMenuItem = async (slug) => {
         try {
-            const response = await fetch(`http://localhost:8084/api/public/menu_items`);
+            const response = await fetch(`${api}/api/public/menu_items`);
             const data = await response.json();
 
             const result = findNestedObjectBySlug(data, slug);
@@ -34,7 +35,7 @@ function MenuItemDetail() {
     const fetchArticles = async (page = 1, size = 10) => {
         try {
             const response = await fetch(
-                `http://localhost:8084/api/public/${slug}/articles?page=${page - 1}&size=${size}`
+                `${api}/api/public/${slug}/articles?page=${page - 1}&size=${size}`
             );
             const data = await response.json();
 
@@ -174,7 +175,7 @@ function MenuItemDetail() {
                                                     article.file_dto && article.file_dto.length > 0 ? (
                                                         <img
                                                             alt="Ảnh tiêu đề"
-                                                            src={`http://localhost:8084${article.file_dto[0].downloadUrl}`}
+                                                            src={`${api}${article.file_dto[0].downloadUrl}`}
                                                             style={{ height: "200px", objectFit: "cover" }}
                                                         />
                                                     ) : null

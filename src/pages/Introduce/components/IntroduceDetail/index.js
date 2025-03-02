@@ -6,10 +6,11 @@ function EmployeeDetail() {
 
     const { slug } = useParams();
     const [content, setContent] = useState(null);
+    const api = process.env.API_URL;
 
     const fetchEm = async () => {
         try {
-            const response = await fetch(`http://localhost:8084/api/public/nhanvien/${slug}/cv`)
+            const response = await fetch(`${api}/api/public/nhanvien/${slug}/cv`)
             const data = await response.json();
 
             setContent(data.content);

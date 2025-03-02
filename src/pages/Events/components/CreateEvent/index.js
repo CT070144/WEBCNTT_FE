@@ -17,6 +17,7 @@ import styles from "./CreateEvent.module.scss"
 import { UploadOutlined } from '@ant-design/icons';
 
 const cx = classNames.bind(styles);
+const api = process.env.API_URL;
 
 const { RangePicker } = DatePicker;
 const normFile = (e) => {
@@ -65,7 +66,7 @@ const onFinish = async (values) => {
 
     // Gửi FormData qua Fetch API
     try {
-        const response = await fetch("http://localhost:8084/api/sukien", {
+        const response = await fetch(api + "/api/sukien", {
             method: "POST",
             body: formData,
             headers: {

@@ -21,6 +21,7 @@ const AddLMI = () => {
     const [newItem, setNewItem] = useState({ i: "", type: "text", content: "" });
     const [editorContent, setEditorContent] = useState("");
     const itemRefs = useRef({}); // Ref lưu các item
+    const api = process.env.API_URL;
 
     const addItem = async () => {
         if (!newItem.type || !["text", "input", "image"].includes(newItem.type)) {
@@ -37,7 +38,7 @@ const AddLMI = () => {
                 formData.append("file", newItem.content);
 
                 // Gửi file ảnh lên server qua API
-                const response = await fetch("http://localhost:8084/uploadImg", {
+                const response = await fetch(api + "/uploadImg", {
                     method: "POST",
                     body: formData,
                 });
@@ -165,7 +166,7 @@ const AddLMI = () => {
                         case "image":
                             return (
                                 <img
-                                    src={("http://localhost:8084" + item.content) || ""}
+                                    src={(api + item.content) || ""}
                                     alt="Uploaded"
                                     style={{ width: "100%", height: "100%", objectFit: "cover" }}
                                 />
@@ -210,7 +211,7 @@ const AddLMI = () => {
                     contentHTML = `<input type="text" value="${item.content || ""}" readonly />`;
                     break;
                 case "image":
-                    contentHTML = `<img src="http://localhost:8084${item.content || ""}" alt="Uploaded Image" style="width: 100%; height: 100%; object-fit: cover;" />`;
+                    contentHTML = `<img src=${api}${item.content || ""}" alt="Uploaded Image" style="width: 100%; height: 100%; object-fit: cover;" />`;
                     break;
                 default:
                     contentHTML = `<div>Invalid Type</div>`;
@@ -265,7 +266,7 @@ const AddLMI = () => {
             formData.append("menuItemId", slug)
             formData.append("file", fileList[0].originFileObj)
 
-            const response = await fetch(`http://localhost:8084/api/articles`, {
+            const response = await fetch(`${api}/api/articles`, {
                 method: "POST",
                 body: formData,
                 headers: {
@@ -399,7 +400,7 @@ const AddLMI = () => {
 
                                         try {
                                             // Tải ảnh lên server
-                                            const response = await fetch("http://localhost:8084/uploadImg", {
+                                            const response = await fetch(api + "/uploadImg", {
                                                 method: "POST",
                                                 headers: {
                                                     "Authorization": `Bearer ${token}`,
@@ -411,7 +412,7 @@ const AddLMI = () => {
 
                                             if (data) {
                                                 console.log(data)
-                                                const imageUrl = `http://localhost:8084${data.downloadUrl}`; // URL đầy đủ của ảnh
+                                                const imageUrl = `${api}${data.downloadUrl}`; // URL đầy đủ của ảnh
 
                                                 // Gọi callback để chèn ảnh vào editor
                                                 callback(imageUrl, { alt: "Uploaded Image" });
@@ -438,7 +439,7 @@ const AddLMI = () => {
 
                                             try {
                                                 // Tải ảnh lên server
-                                                const response = await fetch("http://localhost:8084/uploadImg", {
+                                                const response = await fetch(api + "/uploadImg", {
                                                     method: "POST",
                                                     headers: {
                                                         "Authorization": `Bearer ${token}`
@@ -449,7 +450,7 @@ const AddLMI = () => {
                                                 const data = await response.json();
 
                                                 if (data) {
-                                                    const imageUrl = `http://localhost:8084${data.downloadUrl}`; // URL đầy đủ của ảnh
+                                                    const imageUrl = `${api}${data.downloadUrl}`; // URL đầy đủ của ảnh
 
                                                     // Gọi callback để chèn ảnh vào editor
                                                     callback(imageUrl, { alt: "Uploaded Image" });

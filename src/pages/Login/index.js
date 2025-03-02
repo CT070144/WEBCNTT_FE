@@ -11,6 +11,7 @@ const Login = () => {
     const [error, setError] = useState(null);
     const cx = classNames.bind(styles)
     const formData = new FormData();
+    const api = process.env.API_URL;
 
 
     // Xử lý form đăng nhập
@@ -23,7 +24,7 @@ const Login = () => {
 
         // Kiểm tra tài khoản
         try {
-            const response = await fetch("http://localhost:8084/user/login", {
+            const response = await fetch(api + "/user/login", {
                 method: "POST",
                 body: formData
             });
@@ -54,7 +55,7 @@ const Login = () => {
             }
 
 
-            const fcmResponse = await fetch("http://localhost:8084/api/store-fcm-token", {
+            const fcmResponse = await fetch(api + "/api/store-fcm-token", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

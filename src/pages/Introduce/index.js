@@ -11,10 +11,11 @@ function Introduce() {
     const [employees, setEmployees] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
+    const api = process.env.API_URL;
 
     const fetchEmployee = async (currentPage) => {
         try {
-            const response = await fetch(`http://localhost:8084/api/public/nhanvien?page=${currentPage}`)
+            const response = await fetch(`${api}/api/public/nhanvien?page=${currentPage}`)
             const data = await response.json()
 
             if (!response.ok)
@@ -42,7 +43,7 @@ function Introduce() {
                     <div key={employee.idUser} className={cx("card")}>
                         {/* Sử dụng avaFileCode để lấy URL ảnh */}
                         <img
-                            src={`http://localhost:8084/downloadProfile/${employee.avaFileCode}`}
+                            src={`${api}/downloadProfile/${employee.avaFileCode}`}
                             alt={employee.tenNhanVien}
                             className={cx("image")}
                         />

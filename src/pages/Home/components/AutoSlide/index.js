@@ -8,7 +8,7 @@ import { useNavigate } from "react-router";
 
 function AutoSlide() {
     const [articles, setArticles] = useState([]);
-    const url = "https://web-cntt.onrender.com"
+    const url = process.env.API_URL;
     const cx = classNames.bind(styles);
     const navigate = useNavigate();
 

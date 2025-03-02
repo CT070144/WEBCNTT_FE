@@ -11,11 +11,12 @@ import { DownOutlined } from '@ant-design/icons';
 import Footer from '~/pages/Home/components/Footer';
 
 const cx = classNames.bind(styles)
-const token = localStorage.getItem("auth_token")
+const token = localStorage.getItem("auth_token");
+const api = process.env.API_URL;
 
 const handleLogout = () => {
   localStorage.clear();
-  fetch("http://localhost:8084/user/logout", {
+  fetch(api + "/user/logout", {
     method: "POST",
     headers: {
       "Authorization": `Bearer ${token}`
@@ -52,7 +53,7 @@ function DefaultLayout({ children }) {
   const [route, setRoute] = useState("");
   const [isFixed, setIsFixed] = useState(false);
   const [navItem, setNavItem] = useState([]);
-  const url = "http://localhost:8084"
+  const url = api;
 
   const fetchNavItem = async () => {
     try {
@@ -200,7 +201,7 @@ function DefaultLayout({ children }) {
                   }}
                   placement="bottomRight"
                 >
-                  <img className={cx("avatar")} src={user.avaFileCode != undefined ? ("http://localhost:8084" + user.avaFileCode) : "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"} alt=""></img>
+                  <img className={cx("avatar")} src={user.avaFileCode != undefined ? (api + user.avaFileCode) : "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"} alt=""></img>
                 </Dropdown>
 
               </div>)

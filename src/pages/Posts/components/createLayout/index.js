@@ -19,6 +19,7 @@ const CreateLayout = () => {
     const itemRefs = useRef({}); // Ref lưu các item
     const [summaryEmployee, setSummaryEmployee] = useState([]);
     const [idSelect, setIdSelect] = useState("");
+    const api = process.env.API_URL;
 
     const handleChange = (value) => {
         setIdSelect(value);
@@ -26,7 +27,7 @@ const CreateLayout = () => {
 
     const fetchSummaryEm = async () => {
         try {
-            const response = await fetch("http://localhost:8084/api/public/nhanvien", {
+            const response = await fetch(api + "/api/public/nhanvien", {
                 method: "GET"
             })
 
@@ -59,7 +60,7 @@ const CreateLayout = () => {
                 formData.append("file", newItem.content);
 
                 // Gửi file ảnh lên server qua API
-                const response = await fetch("http://localhost:8084/uploadImg", {
+                const response = await fetch(api + "/uploadImg", {
                     method: "POST",
                     body: formData,
                 });
@@ -199,7 +200,7 @@ const CreateLayout = () => {
                         case "image":
                             return (
                                 <img
-                                    src={("http://localhost:8084" + item.content) || ""}
+                                    src={(api + item.content) || ""}
                                     alt="Uploaded"
                                     style={{ width: "100%", height: "100%", objectFit: "cover" }}
                                 />
@@ -248,7 +249,7 @@ const CreateLayout = () => {
                     contentHTML = `<input type="text" value="${item.content || ""}" readonly />`;
                     break;
                 case "image":
-                    contentHTML = `<img src="http://localhost:8084${item.content || ""}" alt="Uploaded Image" style="width: 100%; height: 100%; object-fit: cover;" />`;
+                    contentHTML = `<img src="${api}${item.content || ""}" alt="Uploaded Image" style="width: 100%; height: 100%; object-fit: cover;" />`;
                     break;
                 default:
                     contentHTML = `<div>Invalid Type</div>`;
@@ -300,7 +301,7 @@ const CreateLayout = () => {
             const formData = new FormData();
             formData.append("content", html);
 
-            const response = await fetch(`http://localhost:8084/api/nhanvien/${idSelect}/cv`, {
+            const response = await fetch(`${api}/api/nhanvien/${idSelect}/cv`, {
                 method: "POST",
                 body: formData,
                 headers: {

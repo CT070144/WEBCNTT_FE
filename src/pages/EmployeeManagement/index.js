@@ -7,7 +7,7 @@ import { Option } from "antd/es/mentions";
 import { UploadOutlined } from "@ant-design/icons";
 
 const cx = classNames.bind(styles);
-const url = "http://localhost:8084"
+const url = process.env.API_URL;
 
 function EmployeeManagement() {
     const [employees, setEmployees] = useState([]);
@@ -29,7 +29,7 @@ function EmployeeManagement() {
         chucVu: "",
     });
 
-    const apiURL = "http://localhost:8084/api/nhanvien";
+    const apiURL = url + "/api/nhanvien";
 
     // Fetch danh sách nhân viên
     const fetchEmployees = async (page) => {
@@ -143,7 +143,7 @@ function EmployeeManagement() {
         }
         // Gửi FormData qua Fetch API
         try {
-            const response = await fetch("http://localhost:8084/api/nhanvien", {
+            const response = await fetch(url + "/api/nhanvien", {
                 method: "POST",
                 body: formData,
                 headers: {
