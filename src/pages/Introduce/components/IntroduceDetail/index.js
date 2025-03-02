@@ -6,7 +6,7 @@ function EmployeeDetail() {
 
     const { slug } = useParams();
     const [content, setContent] = useState(null);
-    const api = process.env.API_URL;
+    const api = process.env.REACT_APP_API_URL;
 
     const fetchEm = async () => {
         try {

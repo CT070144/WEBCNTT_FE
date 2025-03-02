@@ -19,7 +19,7 @@ const CreateLayout = () => {
     const itemRefs = useRef({}); // Ref lưu các item
     const [summaryEmployee, setSummaryEmployee] = useState([]);
     const [idSelect, setIdSelect] = useState("");
-    const api = process.env.API_URL;
+    const api = process.env.REACT_APP_API_URL;
 
     const handleChange = (value) => {
         setIdSelect(value);

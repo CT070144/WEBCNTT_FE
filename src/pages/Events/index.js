@@ -5,7 +5,7 @@ import styles from "./Events.module.scss";
 
 function Events() {
     const cx = classNames.bind(styles);
-    const url = "http://localhost:8084";
+    const url = process.env.REACT_APP_API_URL;
     const navigate = useNavigate();
 
     const [arr, setArr] = useState([]);

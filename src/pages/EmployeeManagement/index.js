@@ -7,7 +7,7 @@ import { Option } from "antd/es/mentions";
 import { UploadOutlined } from "@ant-design/icons";
 
 const cx = classNames.bind(styles);
-const url = process.env.API_URL;
+const url = process.env.REACT_APP_API_URL;
 
 function EmployeeManagement() {
     const [employees, setEmployees] = useState([]);

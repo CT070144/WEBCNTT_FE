@@ -8,7 +8,7 @@ import { Editor } from "@tinymce/tinymce-react";
 
 
 function CreatePost() {
-    const api = process.env.API_URL;
+    const api = process.env.REACT_APP_API_URL;
     const cx = classNames.bind(styles);
     const editorRef = useRef(null);
     const [formData, setFormData] = useState({

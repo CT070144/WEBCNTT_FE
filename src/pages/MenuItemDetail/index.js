@@ -15,7 +15,7 @@ function MenuItemDetail() {
     const [pageSize, setPageSize] = useState(10); // Số bài viết trên mỗi trang
     const cx = classNames.bind(styles);
     const [menuItem, setMenuItem] = useState(null);
-    const api = process.env.API_URL;
+    const api = process.env.REACT_APP_API_URL;
 
     const fetchMenuItem = async (slug) => {
         try {

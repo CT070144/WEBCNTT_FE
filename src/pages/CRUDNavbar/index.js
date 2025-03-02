@@ -10,7 +10,7 @@ const CRUDNavbar = () => {
     const [currentItem, setCurrentItem] = useState(null); // Dùng để sửa menu hiện tại
     const [parentId, setParentId] = useState(null); // Dùng để lưu parentId khi tạo submenu
     const [form] = Form.useForm();
-    const api = process.env.API_URL;
+    const api = process.env.REACT_APP_API_URL;
 
     const token = localStorage.getItem('auth_token'); // Lấy token từ localStorage
 

@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 
 
 function Posts() {
-    const url = process.env.API_URL; // URL API của bạn
+    const url = process.env.REACT_APP_API_URL; // URL API của bạn
     const cx = classNames.bind(styles);
     const editorRef = useRef(null);
     const { user } = useContext(AuthContext);

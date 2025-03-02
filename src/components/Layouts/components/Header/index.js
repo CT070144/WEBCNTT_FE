@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 function Header() {
   const cx = classNames.bind(styles);
   const { user } = useAuth();
-  const api = process.env.API_URL;
+  const api = process.env.REACT_APP_API_URL;
   const token = localStorage.getItem("auth_token")
   const handleLogout = async () => {
     localStorage.clear();

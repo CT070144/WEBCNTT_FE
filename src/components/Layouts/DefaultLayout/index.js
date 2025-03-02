@@ -12,7 +12,7 @@ import Footer from '~/pages/Home/components/Footer';
 
 const cx = classNames.bind(styles)
 const token = localStorage.getItem("auth_token");
-const api = process.env.API_URL;
+const api = process.env.REACT_APP_API_URL;
 
 const handleLogout = () => {
   localStorage.clear();

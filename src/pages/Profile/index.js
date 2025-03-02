@@ -8,7 +8,7 @@ import { useAuth } from "~/Authentication/AuthContext";
 const cx = classNames.bind(styles);
 
 const Profile = () => {
-    const url = process.env.API_URL; // URL cơ sở
+    const url = process.env.REACT_APP_API_URL; // URL cơ sở
     const user = JSON.parse(localStorage.getItem("user"));
     const [formCp] = Form.useForm();
     const [open, setOpen] = useState(false);

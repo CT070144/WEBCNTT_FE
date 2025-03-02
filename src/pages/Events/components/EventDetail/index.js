@@ -12,7 +12,7 @@ const EventDetail = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [sinhVienThamGia, setParticipants] = useState([]);
-    const url = process.env.API_URL;
+    const url = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
         // Hàm fetch data

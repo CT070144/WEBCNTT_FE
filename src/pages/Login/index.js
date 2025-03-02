@@ -11,7 +11,7 @@ const Login = () => {
     const [error, setError] = useState(null);
     const cx = classNames.bind(styles)
     const formData = new FormData();
-    const api = process.env.API_URL;
+    const api = process.env.REACT_APP_API_URL;
 
 
     // Xử lý form đăng nhập

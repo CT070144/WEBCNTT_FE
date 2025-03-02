@@ -17,7 +17,7 @@ import styles from "./CreateEvent.module.scss"
 import { UploadOutlined } from '@ant-design/icons';
 
 const cx = classNames.bind(styles);
-const api = process.env.API_URL;
+const api = process.env.REACT_APP_API_URL;
 
 const { RangePicker } = DatePicker;
 const normFile = (e) => {

@@ -21,7 +21,7 @@ const AddLMI = () => {
     const [newItem, setNewItem] = useState({ i: "", type: "text", content: "" });
     const [editorContent, setEditorContent] = useState("");
     const itemRefs = useRef({}); // Ref lưu các item
-    const api = process.env.API_URL;
+    const api = process.env.REACT_APP_API_URL;
 
     const addItem = async () => {
         if (!newItem.type || !["text", "input", "image"].includes(newItem.type)) {

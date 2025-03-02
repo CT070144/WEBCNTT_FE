@@ -8,7 +8,7 @@ import './PostDetail.css'
 function PostDetail() {
     const cx = classNames.bind(styles);
     const { slug } = useParams();
-    const urlAPI = process.env.API_URL;
+    const urlAPI = process.env.REACT_APP_API_URL;
     const [post, setPost] = useState(null);
     const [fileData, setFileData] = useState([]); // Lưu thông tin file với content-type
     const [pdfPreviewUrl, setPdfPreviewUrl] = useState(null); // Lưu URL file PDF để hiển thị

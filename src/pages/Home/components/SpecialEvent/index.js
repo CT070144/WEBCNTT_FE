@@ -8,7 +8,7 @@ import { useAuth } from "~/Authentication/AuthContext";
 
 function SpecialEvent() {
     const cx = classNames.bind(styles);
-    const url = process.env.API_URL;
+    const url = process.env.REACT_APP_API_URL;
     const { user } = useAuth();
     const [arr, setArr] = useState([]);
     const [loading, setLoading] = useState(true);

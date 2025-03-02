@@ -11,7 +11,7 @@ function Introduce() {
     const [employees, setEmployees] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
-    const api = process.env.API_URL;
+    const api = process.env.REACT_APP_API_URL;
 
     const fetchEmployee = async (currentPage) => {
         try {
