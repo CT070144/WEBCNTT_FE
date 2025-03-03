@@ -126,7 +126,7 @@ function CreatePost() {
 
         const token = localStorage.getItem("auth_token")
 
-        fetch('http://localhost:8084/api/posts', {
+        fetch(api + '/api/posts', {
             method: 'POST',
             body: bodyData,
             headers: {
@@ -250,7 +250,7 @@ function CreatePost() {
 
                                             if (data) {
                                                 console.log(data)
-                                                const imageUrl = `http://localhost:8084${data.downloadUrl}`; // URL đầy đủ của ảnh
+                                                const imageUrl = `${api}${data.downloadUrl}`; // URL đầy đủ của ảnh
 
                                                 // Gọi callback để chèn ảnh vào editor
                                                 callback(imageUrl, { alt: "Uploaded Image" });
@@ -288,7 +288,7 @@ function CreatePost() {
                                                 const data = await response.json();
 
                                                 if (data) {
-                                                    const imageUrl = `http://localhost:8084${data.downloadUrl}`; // URL đầy đủ của ảnh
+                                                    const imageUrl = `${api}${data.downloadUrl}`; // URL đầy đủ của ảnh
 
                                                     // Gọi callback để chèn ảnh vào editor
                                                     callback(imageUrl, { alt: "Uploaded Image" });
