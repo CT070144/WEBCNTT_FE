@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import classNames from "classnames/bind";
 import styles from "./PostDetail.module.scss";
 import 'react-quill/dist/quill.snow.css';
-import './PostDetail.css'
 
 function PostDetail() {
     const cx = classNames.bind(styles);
