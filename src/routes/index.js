@@ -8,7 +8,6 @@ import PostDetail from "~/pages/Posts/components/PostDetail";
 import CreatePost from "~/pages/CreatePost";
 import Login from "~/pages/Login";
 import EventDetail from "~/pages/Events/components/EventDetail";
-import Notifications from "~/pages/Notifications";
 import StudentManagement from "~/pages/StudentManagement";
 import EmployeeManagement from "~/pages/EmployeeManagement";
 import CourseDocument from "~/pages/CourseDocument";
@@ -35,7 +34,6 @@ const publicRoutes = [
     // { path: '/subjectsDoc', component: SubjectsDo, layout: HeaderOnly },
     { path: '/login', component: Login },
     { path: 'events/:slug', component: EventDetail },
-    { path: '/notification', component: Notifications },
     { path: '/introEmployee', component: Introduce },
     { path: '/introducedetail/:slug', component: EmployeeDetail },
     { path: '/:slug', component: MenuItemDetail }
