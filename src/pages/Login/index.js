@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { jwtDecode as decode } from 'jwt-decode';
 import classNames from 'classnames/bind';
 import styles from './Login.module.scss'
-import { fcmToken } from '~/Firebase/firebaseUtils';
 
 
 const Login = () => {
@@ -17,8 +16,6 @@ const Login = () => {
     // Xử lý form đăng nhập
     const handleLogin = async (e) => {
         e.preventDefault();
-        let fcm = ""
-        fcmToken.then((result) => fcm = result)
         formData.append('userName', username);
         formData.append('password', password);
 
@@ -48,25 +45,6 @@ const Login = () => {
 
             // Điều hướng đến trang phù hợp dựa trên role
 
-
-            const fcmObject = {
-                "userId": `${decodedToken.sub}`,
-                "fcmToken": `${fcm}`
-            }
-
-
-            const fcmResponse = await fetch(api + "/api/store-fcm-token", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify(fcmObject)
-            })
-
-            if (!fcmResponse.ok) {
-                throw new Error("Save FCM Token failed");
-            }
 
             if (decodedToken.roles[0].includes("ROLE_ADMIN")) {
                 window.location.replace("/admin");
