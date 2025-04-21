@@ -211,7 +211,7 @@ const AddLMI = () => {
                     contentHTML = `<input type="text" value="${item.content || ""}" readonly />`;
                     break;
                 case "image":
-                    contentHTML = `<img src=${api}${item.content || ""} alt="Uploaded Image" style="width: 100%; height: 100%; object-fit: cover;" />`;
+                    contentHTML = `<img src=${api}${item.content || ""}" alt="Uploaded Image" style="width: 100%; height: 100%; object-fit: cover;" />`;
                     break;
                 default:
                     contentHTML = `<div>Invalid Type</div>`;
