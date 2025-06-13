@@ -5,7 +5,7 @@ import classNames from 'classnames/bind';
 import styles from './CreatePost.module.scss';
 import './CreatePost.css'
 import { Editor } from "@tinymce/tinymce-react";
-
+import { toast } from 'react-toastify';
 
 function CreatePost() {
     const api = process.env.REACT_APP_API_URL;
@@ -140,14 +140,14 @@ function CreatePost() {
                 return response.text();
             })
             .then((data) => {
-                alert('Bài viết đã được tạo thành công!');
+                toast.success('Bài viết đã được tạo thành công!');
                 setFiles([]); // Reset danh sách file sau khi upload thành công
                 setThumbnail(null); // Reset ảnh tiêu đề
                 setThumbnailPreview(null); // Reset preview
             })
             .catch((error) => {
                 console.error('Error:', error);
-                alert('Đã xảy ra lỗi khi tạo bài viết.');
+                toast.error('Đã xảy ra lỗi khi tạo bài viết.');
             });
     };
 

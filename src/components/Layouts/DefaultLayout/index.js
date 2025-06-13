@@ -54,6 +54,8 @@ function DefaultLayout({ children }) {
   const [isFixed, setIsFixed] = useState(false);
   const [navItem, setNavItem] = useState([]);
   const url = api;
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   const fetchNavItem = async () => {
     try {
@@ -83,6 +85,25 @@ function DefaultLayout({ children }) {
     }
     fetchNavItem();
   }, [user])
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY === 0) {
+        setIsVisible(true);
+      } else if (currentScrollY > lastScrollY) {
+        setIsVisible(false); // lăn xuống
+      } 
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [lastScrollY]);
 
   const transformApiItems = (apiItems) => {
     return apiItems.filter(item => !item.deleted).map(item => {
@@ -186,12 +207,12 @@ function DefaultLayout({ children }) {
 
             <div className={cx("search-box")}>
               <button className={cx("btn-search")}><i class="fas fa-search"></i></button>
-              <input type="text" className={cx("input-search")} placeholder="Type to Search..." />
+              <input type="text" className={cx("input-search")} placeholder="Type to search..." />
             </div>
 
 
 
-            {user &&
+            {user &&isVisible&&
               (<div className={cx("options")}>
                 <i className="fa-regular fa-bell"></i>
                 <i className="fa-regular fa-comment"></i>

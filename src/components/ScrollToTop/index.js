@@ -5,6 +5,7 @@ function ScrollToTop() {
     const { pathname } = useLocation(); // Lấy thông tin route hiện tại
 
     useEffect(() => {
+        console.log("pathname", pathname);
         window.scrollTo(0, 0); // Cuộn lên đầu trang
     }, [pathname]); // Chạy lại khi route (pathname) thay đổi
 

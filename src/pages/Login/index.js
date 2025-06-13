@@ -2,37 +2,43 @@ import React, { useState } from 'react';
 import { jwtDecode as decode } from 'jwt-decode';
 import classNames from 'classnames/bind';
 import styles from './Login.module.scss'
-
+import {toast } from 'react-toastify';
 
 const Login = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
     const cx = classNames.bind(styles)
-    const formData = new FormData();
+    const formData = {};
     const api = process.env.REACT_APP_API_URL;
 
 
     // Xử lý form đăng nhập
     const handleLogin = async (e) => {
         e.preventDefault();
-        formData.append('userName', username);
-        formData.append('password', password);
+        formData.userName = username;
+        formData.password = password;
 
         // Kiểm tra tài khoản
         try {
+            
+            
+            
+            console.log(api);
             const response = await fetch(api + "/user/login", {
                 method: "POST",
-                body: formData
+                headers: {
+                    'Content-Type': 'application/json'
+                  },
+                body: JSON.stringify(formData)
             });
 
-            console.log(response)
+        
 
-            if (!response.ok) {
-                throw new Error("Login failed");
-            }
-
-            const token = await response.text();// Giả sử API trả về token JWT
+           
+          const data = await response.json();
+          console.log(data.result);
+            const token = data.result; // Giả sử API trả về token JWT
 
             // Lưu token vào localStorage
             localStorage.setItem("auth_token", token);
@@ -47,15 +53,32 @@ const Login = () => {
 
 
             if (decodedToken.roles[0].includes("ROLE_ADMIN")) {
+
+               setTimeout(() => {
                 window.location.replace("/admin");
+               }, 1000);
             } else if (decodedToken.roles[0].includes("ROLE_EMPLOYEE")) {
-                window.location.replace("/employee");
+                setTimeout(() => {
+                    window.location.replace("/employee");
+                }, 1000);
             } else {
-                window.location.replace("/student");
+                setTimeout(() => {
+                    window.location.replace("/student");
+                }, 1000);
             }
+            toast.success("Đăng nhập thành công",{
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
 
         } catch (err) {
-            setError(err.message);
+           toast.error("Sai tài khoản hoặc mật khẩu");
         }
     };
 

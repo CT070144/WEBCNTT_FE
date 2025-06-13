@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { ConfigProvider } from "antd";
 import { createStyles } from "antd-style";
 import { UserLayout } from "~/components/Layouts";
+import { ToastContainer } from "react-toastify";
 
 const useStyle = createStyles(({ prefixCls, css }) => ({
   linearGradientButton: css`
@@ -45,6 +46,18 @@ function App() {
       }}
       >
         <Router>
+        <ToastContainer
+                position="top-right"
+                autoClose={1500}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
           <div className="App">
             <ScrollToTop></ScrollToTop>
             <Routes>

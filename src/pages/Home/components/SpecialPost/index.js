@@ -27,7 +27,7 @@ function SpecialPost() {
     };
 
     var setting = {
-        dots: true,
+        dots: false,
         infinite: false,
         speed: 500,
         slidesToShow: 4,

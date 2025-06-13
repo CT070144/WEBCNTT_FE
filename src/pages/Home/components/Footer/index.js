@@ -33,7 +33,6 @@ function Footer() {
                         <li>Hệ thống Quản lý Hợp tác Doanh nghiệp</li>
                         <li>Các mẫu biểu dành cho sinh viên</li>
                     </ul>
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3725.2948096523733!2d105.79365357569304!3d20.980816389422746!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135acc508f938fd%3A0x883e474806a2d1f2!2zSOG7jWMgdmnhu4duIEvhu7kgdGh14bqtdCBt4bqtdCBtw6M!5e0!3m2!1svi!2s!4v1735212528139!5m2!1svi!2s" width="350" height="250" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
                 <div className={cx("footer-section", "contact")}>
                     <h3>ACTVN - Khoa Công nghệ thông tin</h3>
@@ -56,9 +55,13 @@ function Footer() {
                         <a href="#">
                             <i className="fas fa-map-marker-alt"></i>
                         </a>
+                        <iframe className={cx("map")} src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3725.2948096523733!2d105.79365357569304!3d20.980816389422746!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135acc508f938fd%3A0x883e474806a2d1f2!2zSOG7jWMgdmnhu4duIEvhu7kgdGh14bqtdCBt4bqtdCBtw6M!5e0!3m2!1svi!2s!4v1735212528139!5m2!1svi!2s" width="350" height="250" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+
                     </div>
                 </div>
             </div>
+           
+
         </footer>
     );
 }

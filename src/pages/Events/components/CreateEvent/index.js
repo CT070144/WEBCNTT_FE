@@ -1,20 +1,15 @@
 import {
     Button,
-    Cascader,
     DatePicker,
     Form,
     Input,
-    InputNumber,
-    Mentions,
-    Select,
-    TreeSelect,
-    Segmented,
     Divider,
     Upload,
 } from 'antd';
 import classNames from "classnames/bind";
 import styles from "./CreateEvent.module.scss"
 import { UploadOutlined } from '@ant-design/icons';
+import { toast } from 'react-toastify';
 
 const cx = classNames.bind(styles);
 const api = process.env.REACT_APP_API_URL;
@@ -50,7 +45,7 @@ const token = localStorage.getItem("auth_token");
 
 const onFinish = async (values) => {
     const formData = new FormData();
-
+  
     // Thêm các trường dữ liệu từ form
     formData.append("eventName", values.Input); // Tên sự kiện
     formData.append("description", values.TextArea); // Mô tả
@@ -75,13 +70,13 @@ const onFinish = async (values) => {
         });
 
         if (response.ok) {
-            const result = await response.json();
-            console.log("Success:", result);
+            toast.success("Tạo sự kiện thành công!");
+         
         } else {
-            console.error("Failed:", response.statusText);
+            toast.error("Tạo sự kiện thất bại!");
         }
     } catch (error) {
-        console.error("Error:", error);
+        toast.error("Tạo sự kiện thất bại!");
     }
 };
 

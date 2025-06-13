@@ -1,5 +1,6 @@
 .post-card {
     height: 380px;
+    min-width: 416px;
     position: relative;
 
     .content-card {
@@ -27,6 +28,16 @@
         .post-info {
             padding: 10px 10px 25px 10px;
             text-align: left;
+            .title{
+                font-size: 18px;
+                font-weight: bold;
+                color: #333;
+                overflow: hidden;
+                height: 22px;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+
+            }
         }
 
         .date {

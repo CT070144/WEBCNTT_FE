@@ -21,6 +21,7 @@ import CRUDNavbar from "~/pages/CRUDNavbar";
 import AddLMI from "~/pages/CRUDNavbar/components/AddLMI";
 import CreateDiscussion from "~/pages/Forum/components/CreateDiscussion";
 import PendingDiscussions from "~/pages/Forum/components/PendingDiscussion";
+import TrainingProgram from "~/pages/TrainingProgram";
 
 const allowAll = ['ROLE_ADMIN', 'ROLE_EMPLOYEE', 'ROLE_STUDENT'];
 const allowStaff = ['ROLE_ADMIN', 'ROLE_EMPLOYEE'];
@@ -28,15 +29,16 @@ const allowStaff = ['ROLE_ADMIN', 'ROLE_EMPLOYEE'];
 const publicRoutes = [
     { path: '', component: Home },
     { path: '/events', component: Events },
-    { path: '/posts', component: Posts },
+    { path: '/posts', component: Posts, layout: DefaultLayout },
     { path: '/studyRoad', component: StudyRoad },
-    { path: '/posts/:slug', component: PostDetail },
+    { path: '/posts/:slug', component: PostDetail, layout: DefaultLayout },
     // { path: '/subjectsDoc', component: SubjectsDo, layout: HeaderOnly },
     { path: '/login', component: Login },
     { path: 'events/:slug', component: EventDetail },
     { path: '/introEmployee', component: Introduce },
     { path: '/introducedetail/:slug', component: EmployeeDetail },
-    { path: '/:slug', component: MenuItemDetail }
+    { path: '/:slug', component: MenuItemDetail },
+    { path: '/trainingProgram', component: TrainingProgram }
 ]
 
 const privateRoutes = [

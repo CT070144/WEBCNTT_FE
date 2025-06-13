@@ -42,7 +42,7 @@ function Card({ post }) {
                         <span className={cx("day")}>{post.create_at.slice(-2)}</span>
                         <span className={cx("month")}>TH {post.create_at.substring(5, 7)}</span>
                     </div>
-                    <h3>{post.title}</h3>
+                    <h3 className={cx("title")}>{post.title}</h3>
                     <p>
                         <i className={cx("fa-solid fa-user")}></i>
                         {post.author}</p>

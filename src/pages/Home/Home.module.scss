@@ -39,8 +39,14 @@
             justify-content: space-between;
             height: 60%;
             margin: 10px 250px;
-
+            .card:hover{
+                transform: scale(1.05);
+                box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+                transition: all 0.3s ease;
+            }
             .card {
+                border-radius: 10px;
+
                 text-align: left;
                 display: flex;
                 height: 100%;

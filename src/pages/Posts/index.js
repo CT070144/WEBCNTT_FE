@@ -5,6 +5,7 @@ import ReactQuill from "react-quill";
 import { AuthContext } from "~/Authentication/AuthContext";
 import { Divider, List, Button } from "antd";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 
 function Posts() {
@@ -84,6 +85,7 @@ function Posts() {
             }
 
             const data = await response.json();
+            console.log(data)
             setPosts(data.content);
             setTotalPages(data.totalPages);
         } catch (error) {
@@ -120,6 +122,7 @@ function Posts() {
             }
 
             const token = localStorage.getItem("auth_token")
+            console.log(formData)
             // Gửi FormData qua API
             const response = await fetch(`${url}/api/posts/${postToUpdate.post_id}`, {
                 method: "PUT",
@@ -128,16 +131,18 @@ function Posts() {
                     "Authorization": `Bearer ${token}`
                 } // FormData không cần Content-Type, fetch tự thêm
             });
-
+           
+            console.log(response);
             if (!response.ok) {
+                console.log("heheh");
                 throw new Error("Failed to update post");
             }
 
-            alert("Bài viết đã được cập nhật thành công!");
+            toast.success("Cập nhật thành công!");
             fetchPosts(page); // Tải lại danh sách bài viết
         } catch (error) {
             console.error("Error updating post:", error);
-            alert("Cập nhật bài viết thất bại!");
+            toast.error("Cập nhật bài viết thất bại!");
         } finally {
             setIsUpdateModalOpen(false); // Đóng modal
             setPostToUpdate(null); // Reset bài viết cần chỉnh sửa
@@ -236,11 +241,11 @@ function Posts() {
                 throw new Error("Failed to delete post");
             }
 
-            alert("Bài viết đã được xóa thành công!");
+           toast.success("Bài viết đã được xóa thành công!");
             fetchPosts(page);
         } catch (error) {
             console.error("Error deleting post:", error);
-            alert("Xóa bài viết thất bại!");
+          toast.error("Xóa bài viết thất bại!");
         } finally {
             setIsDeleteModalOpen(false);
             setPostToDelete(null);

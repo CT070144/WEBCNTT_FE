@@ -17,6 +17,7 @@ function AutoSlide() {
         fetch(url + "/api/public/posts/latest") // Thay API đúng vào đây
             .then((response) => response.json())
             .then((data) => {
+                console.log(data)
                 setArticles(data.slice(0, 4));
             })
             .catch((error) => console.error("Error fetching articles:", error));
