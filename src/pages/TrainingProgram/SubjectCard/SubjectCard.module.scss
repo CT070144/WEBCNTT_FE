@@ -1,0 +1,32 @@
+.subject-card {
+  position: relative;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #ffeaea;
+  border-left-width: 4px;
+  padding: 24px 16px 16px 16px;
+  width: 204px;
+  min-height: 116px;
+  box-sizing: border-box;
+  margin: 8px 0;
+}
+
+.subject-card__badge {
+  position: absolute;
+  top: 12px;
+  left: 16px;
+  background: #ffeaea;
+  color: #ea6d6b;
+  border-radius: 16px;
+  padding: 2px 16px;
+  font-size: 14px;
+  font-weight: 400;
+  display: inline-block;
+}
+
+.subject-card__name {
+  margin-top: 36px;
+  color: #b71c1c;
+  font-size: 15px;
+  font-weight: 600;
+}

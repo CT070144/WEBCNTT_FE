@@ -160,6 +160,12 @@ function DefaultLayout({ children }) {
       )
     },
     {
+      key: 'training-program',
+      label: (
+        <Link to={"/training-program"}>Chương trình đào tạo</Link>
+      )
+    },
+    {
       key: 'forum',
       label: (
         <Link to={"/kmaforum"}>Diễn đàn</Link>
@@ -237,7 +243,7 @@ function DefaultLayout({ children }) {
               className={cx("nav-menu")}
               items={items.map((item) => ({
                 ...item,
-                className: 'custom-menu-item',
+                className: cx('custom-menu-item'),
                 style: {
                   color: "white",
                   // margin: "0 2px",
@@ -246,7 +252,7 @@ function DefaultLayout({ children }) {
               style={{
                 minWidth: 0,
                 background: "#282828",
-                color: "white"
+                color: "red"
               }}
             >
             </Menu>

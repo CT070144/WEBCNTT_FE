@@ -38,7 +38,7 @@ const publicRoutes = [
     { path: '/introEmployee', component: Introduce },
     { path: '/introducedetail/:slug', component: EmployeeDetail },
     { path: '/:slug', component: MenuItemDetail },
-    { path: '/trainingProgram', component: TrainingProgram }
+    { path: '/training-program', component: TrainingProgram }
 ]
 
 const privateRoutes = [
