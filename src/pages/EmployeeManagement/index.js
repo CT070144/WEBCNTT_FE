@@ -39,6 +39,7 @@ function EmployeeManagement() {
                 headers: { Authorization: `Bearer ${token}` },
             });
             const data = await response.json();
+            console.log(data);
             setEmployees(data.content);
             setPagination({
                 currentPage: data.currentPage,
@@ -152,6 +153,7 @@ function EmployeeManagement() {
             });
 
             if (response.ok) {
+                console.log(response)
                 alert("Thêm nhân viên thành công")
             } else {
                 console.error("Failed:", response.statusText);

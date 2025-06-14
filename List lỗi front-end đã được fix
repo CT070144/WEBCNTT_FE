@@ -1,3 +1,4 @@
 - default-option(defaulLayout.js): notification,message,avatar đã được sửa lại để không bị đè lên menu của main và bị ghi đè khi scroll xuống (đã thêm hàm ẩn-hiển khi scroll)
 - fix lại input bị trùng màu header khi focus vào input search
 - thêm toast khi đăng nhập thành công hoặc thất bại
+- thêm page training-program
