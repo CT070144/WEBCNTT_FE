@@ -59,7 +59,7 @@ function SpecialPost() {
 
     return (
         <div className={cx('post-special')}>
-            <h1 className={cx('title')}>BÀI VIẾT MỚI NHẤT</h1>
+            <h1 className={cx('title')}>TIN MỚI NHẤT</h1>
             <div className={cx('posts-item')}>
                 <i className={cx("fa-solid fa-angle-left")} onClick={previous}></i>
                 <Slider ref={sliderRef} className={cx('slider')} {...setting}>

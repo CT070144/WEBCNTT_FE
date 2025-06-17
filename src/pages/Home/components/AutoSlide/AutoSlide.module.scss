@@ -5,7 +5,7 @@
 
     .border {
         width: 100%;
-        height: 4px;
+        height: 6px;
         background-color: #9e1c1c;
     }
 }
@@ -18,7 +18,7 @@
         z-index: 100;
         .poster {
             width: 100%;
-            height: 400px; // Chiều cao cố định cho slider
+            height: 450px; // Chiều cao cố định cho slider
             position: relative;
 
             img {
@@ -40,7 +40,8 @@
                 position: absolute;
                 bottom: 10%;
                 left: 5%;
-                background: rgba(0, 0, 0, 0.6);
+                max-width: 50%;
+                background: var(--primary);
                 color: #fff;
                 padding: 20px;
                 border-radius: 8px;
@@ -55,26 +56,32 @@
                 p {
                     font-size: 14px;
                     margin-bottom: 15px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+
                 }
 
                 .detail-button {
                     display: inline-block;
                     padding: 8px 16px;
-                    background: #f62724;
-                    color: #fff;
+                    background: #ffffff;
+                    color: var(--primary);
+                    font-weight: 700;
                     text-decoration: none;
                     border-radius: 4px;
+                    border: none;
                     transition: background 0.3s ease;
                     cursor: pointer;
 
                     &:hover {
-                        background: #9e1c1c;
+                        background: #ababab;
                     }
                 }
             }
 
             &:hover .overlay {
-                opacity: 1; // Hiện overlay khi hover vào ảnh
+                opacity: 0.9; // Hiện overlay khi hover vào ảnh
             }
         }
     }

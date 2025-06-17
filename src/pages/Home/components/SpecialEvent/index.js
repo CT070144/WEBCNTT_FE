@@ -116,7 +116,7 @@ function SpecialEvent() {
                                 <div className={cx('event-organized')}>{event.organizedBy}</div>
                             </div>
                             <div className={cx('event-status', getEventStatus(event.startAt, event.endAt))}>
-                                {getEventStatus(event.startAt, event.endAt) === 'chua-bat-dau' && 'Chưa bắt đầu'}
+                                {getEventStatus(event.startAt, event.endAt) === 'chua-bat-dau' && 'Sắp diễn ra'}
                                 {getEventStatus(event.startAt, event.endAt) === 'dang-dien-ra' && 'Đang diễn ra'}
                                 {getEventStatus(event.startAt, event.endAt) === 'da-ket-thuc' && 'Đã kết thúc'}
                             </div>

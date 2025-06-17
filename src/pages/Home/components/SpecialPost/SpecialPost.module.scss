@@ -1,14 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
 .post-special {
     text-align: center;
     margin: 20px auto;
-    width: 85%;
+    width: 100%;
 
     .title {
         width: 100%;
-        font-size: 25px;
+        font-size: 30px;
         text-align: center;
         padding: 5px 0;
-        font-weight: 500;
+        font-weight: 480;
     }
 }
 
@@ -17,6 +19,7 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
+    flex-wrap: wrap;
 
     .more-posts {
         height: 380px;

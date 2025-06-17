@@ -141,7 +141,8 @@ const TrainingProgram = () => {
       <div className={cx("breadcrumbs")}>
         <div className={cx("breadcrumbs-container")}>
           <div className={cx("breadcrumbs-item")}>
-            <h1>Nghành Công nghệ thông tin</h1>
+            <h1>Chương trình đào tạo - Nghành Công nghệ thông tin </h1>
+           
           </div>
         </div>
       </div>
@@ -322,7 +323,7 @@ nhân tạo vào các ứng dụng, nâng cao hiệu quả hoạt động của 
                 Là người đã tốt nghiệp THPT hoặc tương đương, tham dự và trúng tuyển (đạt các yêu cầu đầu vào) trong kỳ tuyển sinh đại học hệ chính quy với Tổ hợp xét tuyển: Toán, Lý, Hóa (A00 – khối A); hoặc Toán, Lý, Anh văn (A01 – khối A1) hoặc các phương án xét tuyển riêng của Học viện Công nghệ Bưu chính Viễn thông
                 </div>
             </section>
-            <section id="process">
+            <section id="process" className={cx("process")}>
                 <h1 className={cx("title")}>Quy trình nhập học</h1>
                 <div className={cx("process-content")}>
                     <div className={cx("process-content-item")}>
@@ -351,7 +352,15 @@ nhân tạo vào các ứng dụng, nâng cao hiệu quả hoạt động của 
                     </div>
 
                 </div>
-                <button className={cx("button")}>Chi tiết tại đây</button>
+                <a className={cx("button")}>Chi tiết tại đây</a>
+            </section>
+            <section id="materials">
+              <h1 className={cx("title")}>Tài liệu đào tạo</h1>
+              <div className={cx("materials-content")}>
+                <a href="https://actvneduvn-my.sharepoint.com/personal/vinhlk_actvn_edu_vn/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fvinhlk%5Factvn%5Fedu%5Fvn%2FDocuments%2FC%C3%B4ng%20vi%E1%BB%87c%2FTin%20t%E1%BB%A9c%20Website%2FChuong%20trinh%20dao%20tao%20dai%20hoc%2FCh%C6%B0%C6%A1ng%20tr%C3%ACnh%20%C4%91%C3%A0o%20t%E1%BA%A1o%20ng%C3%A0nh%20C%C3%B4ng%20ngh%E1%BB%87%20th%C3%B4ng%20tin%2Epdf&parent=%2Fpersonal%2Fvinhlk%5Factvn%5Fedu%5Fvn%2FDocuments%2FC%C3%B4ng%20vi%E1%BB%87c%2FTin%20t%E1%BB%A9c%20Website%2FChuong%20trinh%20dao%20tao%20dai%20hoc&ga=1" target="_blank" className={cx("doccument-link")}>10QD_Chuan dau ra</a>
+
+                <a href="https://actvneduvn-my.sharepoint.com/personal/vinhlk_actvn_edu_vn/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fvinhlk%5Factvn%5Fedu%5Fvn%2FDocuments%2FC%C3%B4ng%20vi%E1%BB%87c%2FTin%20t%E1%BB%A9c%20Website%2FChuong%20trinh%20dao%20tao%20dai%20hoc%2FCh%C6%B0%C6%A1ng%20tr%C3%ACnh%20%C4%91%C3%A0o%20t%E1%BA%A1o%20ng%C3%A0nh%20C%C3%B4ng%20ngh%E1%BB%87%20th%C3%B4ng%20tin%2Epdf&parent=%2Fpersonal%2Fvinhlk%5Factvn%5Fedu%5Fvn%2FDocuments%2FC%C3%B4ng%20vi%E1%BB%87c%2FTin%20t%E1%BB%A9c%20Website%2FChuong%20trinh%20dao%20tao%20dai%20hoc&ga=1" target="_blank" className={cx("doccument-link")}>14QD_Chương trình đào tạo</a>
+              </div>
             </section>
           </div>
         </div>

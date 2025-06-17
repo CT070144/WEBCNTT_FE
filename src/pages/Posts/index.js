@@ -475,6 +475,7 @@ function Posts() {
             <div className={cx("my-post")}>
                 <Divider orientation="left"><h3>Bài viết mới nhất</h3></Divider>
                 <List
+                    className={cx("my-post-list")}
                     bordered
                     pagination={{
                         position: "bottom",
@@ -487,6 +488,7 @@ function Posts() {
                     dataSource={myPosts}
                     renderItem={(item) => (
                         <List.Item>
+                            <img src={item.file_dto[0] ? (url + item.file_dto[0].downloadUrl) : "https://actvn.edu.vn/News/GetImage/28237"} alt="" className={cx("my-post-image")}></img>
                             <Link to={`/posts/${item.postId}`}>{item.title}</Link>
                         </List.Item>
                     )}>

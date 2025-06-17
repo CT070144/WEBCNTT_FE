@@ -9,6 +9,7 @@
         padding: 10px 0;
         font-weight: 500;
         font-size: 25px;
+        padding-bottom: 20px;
     }
 
     .event-list {
@@ -102,7 +103,7 @@
             padding: 5px 10px;
 
             &.chua-bat-dau {
-                background-color: #e4d1b4; // Màu đỏ cho "Chưa bắt đầu"
+                background-color: #eaad50; // Màu đỏ cho "Chưa bắt đầu"
                 color: white;
             }
 
@@ -134,16 +135,18 @@
         display: block;
         width: 100%;
         font-size: 18px;
-        color: #ff0000;
+        color: #f6f6f6;
+        background-color: var(--primary);
         text-decoration: none;
         font-weight: bold;
-        border: 2px solid #ff0000;
+        border: 2px solid var(--primary);
         padding: 8px 20px;
         transition: background-color 0.3s, color 0.3s;
 
         &:hover {
-            background-color: #d40000;
-            color: white;
+            background-color: #ffffff;
+            color: var(--primary);
+            border: 2px solid var(--primary);
         }
     }
 

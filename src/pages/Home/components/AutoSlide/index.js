@@ -42,7 +42,7 @@ function AutoSlide() {
                 {articles.map((item, index) => (
                     <div key={index} className={cx('slide-item')}>
                         <div className={cx('poster')}>
-                            <img src={url + item.file_dto[0]?.downloadUrl} alt="" />
+                            <img src={url + item.file_dto[0]?.downloadUrl} alt="" className={cx('poster-image')} />
                             <div className={cx('bubbles')}>
                                 {[...Array(10)].map((_, i) => (
                                     <span key={i} className={cx('bubble')}></span>

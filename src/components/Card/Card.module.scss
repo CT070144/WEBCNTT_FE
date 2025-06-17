@@ -11,10 +11,10 @@
         width: 80%;
         height: 83%;
         position: relative;
-        background-color: #fff;
+        background-color: inherit;
         border-radius: 2px;
         overflow: hidden;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        
         transition: transform 0.3s ease-in-out;
         text-decoration: none;
         color: inherit;
@@ -29,11 +29,12 @@
             padding: 10px 10px 25px 10px;
             text-align: left;
             .title{
+                padding-top: 12px;
                 font-size: 18px;
                 font-weight: bold;
                 color: #333;
                 overflow: hidden;
-                height: 22px;
+                
                 text-overflow: ellipsis;
                 white-space: nowrap;
 
@@ -42,8 +43,8 @@
 
         .date {
             position: absolute;
-            top: 10px;
-            left: 10px;
+            top: 132px;
+            left: 11px;
             background-color: #333;
             color: #fff;
             padding: 10px;

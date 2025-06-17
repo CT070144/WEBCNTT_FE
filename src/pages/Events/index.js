@@ -49,30 +49,33 @@ function Events() {
 
     return (
         <div className={cx('container')}>
-            <h1>Sự kiện mới nhất</h1>
+            <h1 className={cx('title')}>Sự kiện mới nhất</h1>
 
             <div className={cx('event-list')}>
-                {arr.map((event, index) => (
-                    <div key={index} className={cx('event-item')} onClick={() => navigate(`/events/${event.eventId}`)}>
-                        <div className={cx('event-tag')} >Sự kiện</div>
-                        <div className={cx('event-details')}>
-                            <div className={cx('event-name')}>{event.eventName}</div>
-                            <div className={cx('event-date')}>
-                                <span className={cx('start-date')}>{event.startAt.split('-').reverse().join('/')}</span> -
-                                <span className={cx('end-date')}>{event.endAt.split('-').reverse().join('/')}</span>
+                {arr.map((event, index) => {
+                    // Lấy ngày và tháng từ startAt
+                    const dateObj = new Date(event.startAt);
+                    const day = dateObj.getDate().toString().padStart(2, '0');
+                    const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
+                    return (
+                        <div key={index} className={cx('event-card')} onClick={() => navigate(`/events/${event.eventId}`)}>
+                            <div className={cx('event-image-wrapper')}>
+                                <img src={event.fileDTOList[0] ? (url + event.fileDTOList[0].downloadUrl) : "https://soict.hust.edu.vn/wp-content/uploads/2019/05/a.jpg"} className={cx('event-image')}></img>
+                                <div className={cx('event-date-overlay')}>
+                                    <div className={cx('event-day')}>{day}</div>
+                                    <div className={cx('event-month')}>TH {month}</div>
+                                </div>
                             </div>
-                            <div className={cx('event-location')}>{event.location}</div>
-                            <div className={cx('event-organized')}>{event.organizedBy}</div>
-
+                            <div className={cx('event-info')}> 
+                                <div className={cx('event-title')}>{event.eventName.length > 40 ? event.eventName.slice(0, 40) + '...' : event.eventName}</div>
+                                <div className={cx('event-meta')}>
+                                    <span className={cx('event-author')}><i className="fa fa-user"></i> {event.organizedBy || 'Không rõ'}</span>
+                                </div>
+                                <div className={cx('event-description')}>{event.description ? (event.description.length > 100 ? event.description.slice(0, 100) + '...' : event.description) : ''}</div>
+                            </div>
                         </div>
-                        <div className={cx('event-status', getEventStatus(event.startAt, event.endAt))}>
-                            {getEventStatus(event.startAt, event.endAt) === 'chua-bat-dau' && 'Chưa bắt đầu'}
-                            {getEventStatus(event.startAt, event.endAt) === 'dang-dien-ra' && 'Đang diễn ra'}
-                            {getEventStatus(event.startAt, event.endAt) === 'da-ket-thuc' && 'Đã kết thúc'}
-                        </div>
-
-                    </div>
-                ))}
+                    )
+                })}
             </div>
 
             {/* Thêm Link dẫn đến trang xem toàn bộ bài viết */}

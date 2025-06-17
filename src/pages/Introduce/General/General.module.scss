@@ -1,0 +1,80 @@
+.generalWrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 16px 0 16px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  text-align: center;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #ff9800;
+  gap: 8px;
+}
+
+.time {
+  color: #ff9800;
+}
+
+.contact {
+  color: #ff9800;
+  font-weight: 500;
+  margin-left: 4px;
+  text-transform: uppercase;
+}
+
+.title {
+  color: #e53935;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 12px 0 0 0;
+  letter-spacing: 1px;
+}
+
+.separator {
+  color: #e53935;
+  font-size: 1.2rem;
+  margin: 0 0 18px 0;
+  font-weight: 600;
+}
+
+.info {
+  margin-bottom: 18px;
+  font-size: 1.1rem;
+  color: #00897b;
+  line-height: 1.7;
+}
+
+.address span,
+.phone span,
+.email span {
+  color: #00897b;
+  font-weight: 500;
+}
+
+.mapWrapper {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto 24px auto;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+@media (max-width: 800px) {
+  .generalWrapper {
+    padding: 12px 2vw 0 2vw;
+  }
+  .mapWrapper iframe {
+    height: 250px !important;
+  }
+  .title {
+    font-size: 1.2rem;
+  }
+}

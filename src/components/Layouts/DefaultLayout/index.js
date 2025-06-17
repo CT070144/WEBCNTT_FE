@@ -246,7 +246,8 @@ function DefaultLayout({ children }) {
                 className: cx('custom-menu-item'),
                 style: {
                   color: "white",
-                  // margin: "0 2px",
+                  fontSize: "15px",
+                  fontWeight: "bold",
                 }
               }))}
               style={{
