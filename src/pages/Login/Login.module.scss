@@ -1,3 +1,14 @@
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+    background-image: url('https://scontent.fhan2-3.fna.fbcdn.net/v/t39.30808-6/484826395_1047959504027244_6192857287718690832_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=101&ccb=1-7&_nc_sid=86c6b0&_nc_ohc=hsujmTM2_4QQ7kNvwEdcQC-&_nc_oc=Adm-BzhN3rqZX_BYd2XOWw9mD6na1NtfhnOTbAE9EyX61tbDf8jpDhCNtM2_3YoP8t8&_nc_zt=23&_nc_ht=scontent.fhan2-3.fna&_nc_gid=Asv6XklXFSUoIEPTxfPY1w&oh=00_AfNaDlvOMsml1Q8HsZaC2LF-WgND3yEJixI2siZtliE9iw&oe=6856C0CB');
+    background-size: cover;
+    background-position: 120% 60%;
+  
+}
 .login-container {
     width: 450px;
     padding: 20px;

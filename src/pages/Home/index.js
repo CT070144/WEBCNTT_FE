@@ -23,7 +23,7 @@ function Home() {
     
   ]
   return (
-    <div>
+   
       <div className={cx("wrapper")}>
         <AutoSlide></AutoSlide>
         <SpecialPost></SpecialPost>
@@ -41,7 +41,7 @@ function Home() {
         </div>
         <SpecialEvent></SpecialEvent>
       </div>
-    </div>
+    
   );
 }
 

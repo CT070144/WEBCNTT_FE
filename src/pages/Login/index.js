@@ -32,7 +32,8 @@ const Login = () => {
                   },
                 body: JSON.stringify(formData)
             });
-
+            const json = JSON.stringify(formData);
+            console.log(json);
         
 
            
@@ -83,6 +84,9 @@ const Login = () => {
     };
 
     return (
+        <div className={cx("wrapper")}>
+            
+       
         <div className={cx("login-container")}>
             <img
                 src="https://actvn.edu.vn/Images/actvn_big_icon.png"
@@ -113,6 +117,7 @@ const Login = () => {
                 {error && <p style={{ color: 'red' }}>{error}</p>}
                 <button type="submit">Đăng Nhập</button>
             </form>
+        </div>
         </div>
     );
 };

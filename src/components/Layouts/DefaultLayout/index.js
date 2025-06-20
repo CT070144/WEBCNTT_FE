@@ -186,7 +186,7 @@ function DefaultLayout({ children }) {
         },
       },
     }}>
-      <Layout>
+      <Layout className={cx('wrapper')}>
         <Header
           style={{
             position: 'sticky',
@@ -236,7 +236,7 @@ function DefaultLayout({ children }) {
           </div>
         </Header>
 
-        <Content>
+        <Content className={cx("content")}>
           <div style={{ background: "#282828" }} className={cx("navbar", { fixed: isFixed })}>
             <Menu
               mode="horizontal"

@@ -8,6 +8,7 @@
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
     "@fontsource/roboto": "^5.2.6",
+    "@hookform/resolvers": "^5.1.1",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -24,6 +25,7 @@
     "react-app-rewired": "^2.2.1",
     "react-dom": "^18.3.1",
     "react-grid-layout": "^1.5.0",
+    "react-hook-form": "^7.58.1",
     "react-pro-sidebar": "^1.1.0",
     "react-quill": "^2.0.0",
     "react-router": "^6.27.0",
@@ -32,7 +34,8 @@
     "react-slick": "^0.30.2",
     "react-toastify": "^11.0.5",
     "slick-carousel": "^1.8.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "yup": "^1.6.1"
   },
   "scripts": {
     "start": "react-app-rewired start",

@@ -1,348 +1,563 @@
 import React, { useEffect, useState } from "react";
 import classNames from "classnames/bind";
 import styles from "./EmployeeManagement.module.scss";
-import { Button, DatePicker, Divider, Form, Input, Select, Space, Table, Upload } from "antd";
+import {
+  Button,
+  DatePicker,
+  Divider,
+  Form,
+  Input,
+  Select,
+  Space,
+  Table,
+  Upload,
+} from "antd";
 import Column from "antd/es/table/Column";
-import { Option } from "antd/es/mentions";
 import { UploadOutlined } from "@ant-design/icons";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import dayjs from "dayjs";
 
 const cx = classNames.bind(styles);
 const url = process.env.REACT_APP_API_URL;
 
+// Validation Schema with Yup
+const schema = yup.object().shape({
+  avatar: yup
+    .array()
+    .min(1, "Vui lòng tải lên ảnh đại diện.")
+    .required("Vui lòng tải lên ảnh đại diện."),
+  maNhanVien: yup.string().required("Mã nhân viên là bắt buộc."),
+  username: yup.string().required("Tên đăng nhập là bắt buộc."),
+  fullname: yup.string().required("Họ tên là bắt buộc."),
+  dob: yup
+    .date()
+    .required("Ngày sinh là bắt buộc.")
+    .typeError("Vui lòng chọn ngày sinh hợp lệ."),
+  gender: yup.string().required("Vui lòng chọn giới tính."),
+  phongBan: yup.string().required("Vui lòng chọn phòng ban."),
+  dienThoai: yup
+    .string()
+    .required("Số điện thoại là bắt buộc.")
+    .matches(/^[0-9]+$/, "Chỉ được nhập số."),
+  diaChiHienNay: yup.string().required("Địa chỉ hiện nay là bắt buộc."),
+  chucVu: yup.string().required("Chức vụ là bắt buộc."),
+  monGiangDayChinh: yup.string().required("Vui lòng chọn môn giảng dạy chính."),
+});
+
 function EmployeeManagement() {
-    const [employees, setEmployees] = useState([]);
-    const token = localStorage.getItem("auth_token");
-    const [pagination, setPagination] = useState({
-        currentPage: 0,
-        totalPages: 0,
-        pageSize: 10,
-    });
-    const [showForm, setShowForm] = useState(false);
-    const [editMode, setEditMode] = useState(false);
-    const [currentEmployee, setCurrentEmployee] = useState({
-        tenNhanVien: "",
-        maNhanVien: "",
-        ngaySinh: "",
-        gioiTinh: "",
-        dienThoai: "",
-        diaChi: "",
-        chucVu: "",
-    });
+  const [employees, setEmployees] = useState([]);
+  const [subjects, setSubjects] = useState([]);
+  const token = localStorage.getItem("auth_token");
+  const [pagination, setPagination] = useState({
+    currentPage: 0,
+    totalPages: 0,
+    pageSize: 10,
+  });
+  const [showForm, setShowForm] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [currentEmployee, setCurrentEmployee] = useState({
+    tenNhanVien: "",
+    maNhanVien: "",
+    ngaySinh: "",
+    gioiTinh: "",
+    dienThoai: "",
+    diaChi: "",
+    chucVu: "",
+  });
 
-    const apiURL = url + "/api/nhanvien";
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
-    // Fetch danh sách nhân viên
-    const fetchEmployees = async (page) => {
-        try {
-            const token = localStorage.getItem("auth_token");
-            const response = await fetch(`${apiURL}?page=${page}&size=${pagination.pageSize}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            const data = await response.json();
-            console.log(data);
-            setEmployees(data.content);
-            setPagination({
-                currentPage: data.currentPage,
-                totalPages: data.totalPages,
-                pageSize: data.pageSize,
-            });
-        } catch (error) {
-            alert("Lỗi khi lấy danh sách nhân viên!");
+  const apiURL = url + "/api/nhanvien";
+
+  // Fetch danh sách nhân viên
+  const fetchEmployees = async (page) => {
+    try {
+      const token = localStorage.getItem("auth_token");
+      const response = await fetch(
+        `${apiURL}?page=${page}&size=${pagination.pageSize}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
         }
-    };
+      );
+      const data = await response.json();
+      console.log(data);
+      setEmployees(data.content);
+      setPagination({
+        currentPage: data.currentPage,
+        totalPages: data.totalPages,
+        pageSize: data.pageSize,
+      });
+    } catch (error) {
+      alert("Lỗi khi lấy danh sách nhân viên!");
+    }
+  };
 
-    useEffect(() => {
-        fetchEmployees(0);
-    }, []);
+  const fetchSubjects = async () => {
+    try {
+      const response = await fetch(url + "/api/monhoc", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        // Handle both array and object with 'content' property
+        const subjectsList = Array.isArray(data) ? data : data.content;
+        setSubjects(subjectsList || []);
+      } else {
+        console.error("Failed to fetch subjects");
+      }
+    } catch (error) {
+      alert("Lỗi khi lấy danh sách môn học!");
+    }
+  };
 
-    // Xóa nhân viên
-    const handleDeleteEmployee = async (idUser) => {
-        if (!window.confirm("Bạn có chắc chắn muốn xóa nhân viên này?")) return;
+  useEffect(() => {
+    fetchEmployees(0);
+    fetchSubjects();
+  }, []);
 
-        try {
+  // Xóa nhân viên
+  const handleDeleteEmployee = async (idUser) => {
+    if (!window.confirm("Bạn có chắc chắn muốn xóa nhân viên này?")) return;
 
-            const response = await fetch(`${apiURL}/${idUser}`, {
-                method: "DELETE",
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            if (response.ok) {
-                alert("Xóa nhân viên thành công!");
-                fetchEmployees(pagination.currentPage);
-            } else {
-                alert("Xóa nhân viên thất bại!");
-            }
-        } catch (error) {
-            alert("Lỗi khi xóa nhân viên!");
-        }
-    };
+    try {
+      const response = await fetch(`${apiURL}/${idUser}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.ok) {
+        alert("Xóa nhân viên thành công!");
+        fetchEmployees(pagination.currentPage);
+      } else {
+        alert("Xóa nhân viên thất bại!");
+      }
+    } catch (error) {
+      alert("Lỗi khi xóa nhân viên!");
+    }
+  };
 
+  // Thêm nhân viên
+  const handleAddEmployee = () => {
+    setEditMode(false);
+    setCurrentEmployee({});
+    reset();
+    setShowForm(true);
+  };
 
-    // Thêm nhân viên
-    const handleAddEmployee = () => {
-        setCurrentEmployee({
-            tenNhanVien: "",
-            maNhanVien: "",
-            ngaySinh: "",
-            gioiTinh: "",
-            dienThoai: "",
-            diaChi: "",
-            chucVu: "",
-        });
+  // Sửa nhân viên
+  const handleEditEmployee = (employee) => {
+    setCurrentEmployee(employee);
+    setEditMode(true);
+    setShowForm(true);
+    
+    // Populate form with existing data
+    reset({
+      maNhanVien: employee.maNhanVien,
+      username: employee.userName,
+      fullname: employee.tenNhanVien,
+      dob: employee.ngaySinh ? dayjs(employee.ngaySinh) : null,
+      gender: employee.gioiTinh,
+      phongBan: employee.maPhongBan,
+      dienThoai: employee.dienThoai,
+      diaChiHienNay: employee.diaChiHienNay,
+      chucVu: employee.chucVu,
+      monGiangDayChinh: employee.monGiangDayChinh,
+      avatar: employee.avaFileCode ? [{
+        uid: '-1',
+        name: 'avatar.jpg',
+        status: 'done',
+        url: url + employee.avaFileCode
+      }] : []
+    });
+  };
+
+  // Lưu nhân viên
+  const handleSaveEmployee = async () => {
+    const method = editMode ? "PUT" : "POST";
+    const url = editMode ? `${apiURL}/${currentEmployee.idUser}` : apiURL;
+
+    const formData = new FormData();
+    Object.entries(currentEmployee).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+
+    try {
+      const token = localStorage.getItem("auth_token");
+      const response = await fetch(url, {
+        method,
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+      if (response.ok) {
+        alert(`${editMode ? "Cập nhật" : "Thêm"} nhân viên thành công!`);
+        setShowForm(false);
+        fetchEmployees(pagination.currentPage);
+      } else {
+        alert(`${editMode ? "Cập nhật" : "Thêm"} nhân viên thất bại!`);
+      }
+    } catch (error) {
+      alert("Lỗi khi lưu nhân viên!");
+    }
+  };
+
+  const onSubmit = async (data) => {
+    const formData = new FormData();
+
+    formData.append("maNhanVien", data.maNhanVien);
+    formData.append("tenNhanVien", data.fullname);
+    formData.append("gioiTinh", data.gender);
+    formData.append("ngaySinh", dayjs(data.dob).format("YYYY-MM-DD"));
+    formData.append("userName", data.username);
+    formData.append("maPhongBan", data.phongBan);
+    formData.append("dienThoai", data.dienThoai);
+    formData.append("diaChiHienNay", data.diaChiHienNay);
+    formData.append("chucVu", data.chucVu);
+    formData.append("monGiangDayChinh", data.monGiangDayChinh);
+
+    if (data.avatar && data.avatar.length > 0) {
+      formData.append("file", data.avatar[0].originFileObj);
+    }
+
+    try {
+      const method = editMode ? "PUT" : "POST";
+      const apiEndpoint = editMode ? `${apiURL}/${currentEmployee.idUser}` : `${apiURL}`;
+      
+      const response = await fetch(apiEndpoint, {
+        method,
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        alert(`${editMode ? "Cập nhật" : "Thêm"} nhân viên thành công`);
+        setShowForm(false);
         setEditMode(false);
-        setShowForm(true);
-    };
+        setCurrentEmployee({});
+        reset();
+        fetchEmployees(pagination.currentPage);
+      } else {
+        const errorData = await response.json();
+        const errorMessage = errorData.message || `${editMode ? "Cập nhật" : "Thêm"} nhân viên thất bại`;
+        alert(errorMessage);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Có lỗi xảy ra, vui lòng thử lại.");
+    }
+  };
 
-    // Sửa nhân viên
-    const handleEditEmployee = (employee) => {
-        setCurrentEmployee(employee);
-        setEditMode(true);
-        setShowForm(true);
-    };
+  return (
+    <div className={cx("employee-management")}>
+      <button onClick={handleAddEmployee} className={cx("add-button")}>
+        Thêm Nhân Viên
+      </button>
 
-    // Lưu nhân viên
-    const handleSaveEmployee = async () => {
-        const method = editMode ? "PUT" : "POST";
-        const url = editMode ? `${apiURL}/${currentEmployee.idUser}` : apiURL;
-
-        const formData = new FormData();
-        Object.entries(currentEmployee).forEach(([key, value]) => {
-            formData.append(key, value);
-        });
-
-        try {
-            const token = localStorage.getItem("auth_token");
-            const response = await fetch(url, {
-                method,
-                headers: { Authorization: `Bearer ${token}` },
-                body: formData,
-            });
-            if (response.ok) {
-                alert(`${editMode ? "Cập nhật" : "Thêm"} nhân viên thành công!`);
-                setShowForm(false);
-                fetchEmployees(pagination.currentPage);
-            } else {
-                alert(`${editMode ? "Cập nhật" : "Thêm"} nhân viên thất bại!`);
-            }
-        } catch (error) {
-            alert("Lỗi khi lưu nhân viên!");
-        }
-    };
-
-    const onFinish = async (values) => {
-        const formData = new FormData();
-
-        // Thêm các trường dữ liệu từ form
-        formData.append("maNhanVien", values.maNhanVien); // Tên sự kiện
-        formData.append("tenNhanVien", values.fullname); // Mô tả
-        formData.append("gioiTinh", values.gender); // Địa điểm
-        formData.append("ngaySinh", values.dob.format("YYYY-MM-DD")); // Ngày bắt đầu
-        formData.append("userName", values.username);
-        formData.append("maPhongBan", values.phongBan); // Ngày kết thúc
-        // Xử lý file upload
-        if (values.avatar && values.avatar.length > 0) {
-            formData.append("file", values.avatar[0].originFileObj);
-        }
-        // Gửi FormData qua Fetch API
-        try {
-            const response = await fetch(url + "/api/nhanvien", {
-                method: "POST",
-                body: formData,
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                }
-            });
-
-            if (response.ok) {
-                console.log(response)
-                alert("Thêm nhân viên thành công")
-            } else {
-                console.error("Failed:", response.statusText);
-            }
-            fetchEmployees(pagination.currentPage)
-        } catch (error) {
-            console.error("Error:", error);
-        }
-    };
-
-    const [form] = Form.useForm();
-    const normFile = (e) => {
-        console.log('Upload event:', e);
-        if (Array.isArray(e)) {
-            return e;
-        }
-        return e?.fileList;
-    };
-    return (
-        <div className={cx("employee-management")}>
-            <button onClick={handleAddEmployee} className={cx("add-button")}>Thêm Nhân Viên</button>
-
-            {/* Danh sách nhân viên */}
-            <Table dataSource={employees}
-                pagination={{
-                    position: "bottom",
-                    align: "center",
-                    onChange: (page) => {
-                        fetchEmployees(page - 1);
-                    },
-                    pageSize: 5,
-                }}
+      {/* Danh sách nhân viên */}
+      <Table
+        dataSource={employees}
+        pagination={{
+          position: "bottom",
+          align: "center",
+          onChange: (page) => {
+            fetchEmployees(page - 1);
+          },
+          pageSize: 5,
+        }}
+      >
+        <Column
+          title="Họ và tên"
+          render={(_, record) => (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
             >
-                <Column title="Họ và tên" render={(_, record) => (
-                    <div style={{
-                        display: "flex",
-                        alignItems: "center"
-                    }}>
-                        <img style={{ width: "50px", height: "50px", objectFit: "cover", marginRight: "10px", borderRadius: "50%" }} src={url + record.avaFileCode} alt=""></img>
-                        <p>{record.tenNhanVien}</p>
-                    </div>
-                )} key="tenNhanVien"></Column>
-                <Column title="Mã nhân viên" dataIndex="maNhanVien" key="maNhanVien"></Column>
-                <Column title="Ngày Sinh" dataIndex="ngaySinh" key="ngaySinh"></Column>
-                <Column title="Địa chỉ" dataIndex="diaChi" key="diaChi"></Column>
-                <Column title="Chức vụ" dataIndex="chucVu" key="chucVu"></Column>
-                <Column
-                    title="Action"
-                    key="action"
-                    render={(_, record) => (
-                        <Space size="middle">
-                            <Button>Sửa</Button>
-                            <Button>Xóa</Button>
-                        </Space>
-                    )}
+              <img
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  objectFit: "cover",
+                  marginRight: "10px",
+                  borderRadius: "50%",
+                }}
+                src={url + record.avaFileCode}
+                alt=""
+              ></img>
+              <p>{record.tenNhanVien}</p>
+            </div>
+          )}
+          key="tenNhanVien"
+        ></Column>
+        <Column
+          title="Mã nhân viên"
+          dataIndex="maNhanVien"
+          key="maNhanVien"
+        ></Column>
+        <Column title="Ngày Sinh" dataIndex="ngaySinh" key="ngaySinh"></Column>
+        <Column title="Địa chỉ" dataIndex="diaChiHienNay" key="diaChiHienNay"></Column>
+        <Column title="Chức vụ" dataIndex="chucVu" key="chucVu"></Column>
+        <Column
+          title="Action"
+          key="action"
+          render={(_, record) => (
+            <Space size="middle">
+              <Button onClick={() => handleEditEmployee(record)}>Sửa</Button>
+              <Button onClick={() => handleDeleteEmployee(record.idUser)}>
+                Xóa
+              </Button>
+            </Space>
+          )}
+        />
+      </Table>
+
+      {/* Modal Thêm/Sửa */}
+      {showForm && (
+        <div className={cx("form-overlay")}>
+          <div className={cx("form-container")}>
+            <Divider orientation="center">
+              <h2>{editMode ? "Sửa thông tin nhân viên" : "Thêm nhân viên mới"}</h2>
+            </Divider>
+            <form onSubmit={handleSubmit(onSubmit)} className={cx("form")}>
+              {/* Avatar */}
+              <div className={cx("form-item", "form-item-full-width")}>
+                <label>Avatar</label>
+                <Controller
+                  name="avatar"
+                  control={control}
+                  render={({ field }) => (
+                    <Upload
+                      {...field}
+                      listType="picture"
+                      maxCount={1}
+                      beforeUpload={() => false} // Prevent auto-upload
+                      onChange={(e) => field.onChange(e.fileList)}
+                    >
+                      <Button icon={<UploadOutlined />}>Click to upload</Button>
+                    </Upload>
+                  )}
                 />
-            </Table>
+                {errors.avatar && (
+                  <p className={cx("error-message")}>{errors.avatar.message}</p>
+                )}
+              </div>
 
-            {/* Modal Thêm/Sửa */}
-            {showForm && (
-                <div className={cx("form-overlay")}>
-                    <div className={cx("form-container")}>
-                        <Divider orientation="center"><h2>Thêm nhân viên mới</h2></Divider>
-                        <Form
-                            form={form}
-                            style={{
-                                maxWidth: 600,
-                            }}
-                            className={cx("form")}
-                            onFinish={onFinish}>
-                            <Form.Item
-                                label="Avatar"
-                                name="avatar"
-                                valuePropName="fileList"
-                                getValueFromEvent={normFile}
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input!',
-                                    },
-                                ]}
-                            >
-                                <Upload name="doc" >
-                                    <Button icon={<UploadOutlined />}>Click to upload</Button>
-                                </Upload>
-                            </Form.Item>
-                            <Form.Item
-                                label="Mã nhân viên"
-                                name="maNhanVien"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input!',
-                                    },
-                                ]}
-                            >
-                                <Input
-                                />
-                            </Form.Item>
-                            <Form.Item
-                                label="Username"
-                                name="username"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input!',
-                                    },
-                                ]}
-                            >
-                                <Input
-                                />
-                            </Form.Item>
-                            <Form.Item
-                                label="Họ tên"
-                                name="fullname"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input!',
-                                    },
-                                ]}
-                            >
-                                <Input
-                                />
-                            </Form.Item>
-                            <Form.Item
-                                label="Ngày sinh"
-                                name="dob"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input!',
-                                    },
-                                ]}
-                            >
-                                <DatePicker />
-                            </Form.Item>
-                            <Form.Item
-                                label="Giới tính"
-                                name="gender"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input!',
-                                    },
-                                ]}
-                            >
-                                <Select>
-                                    <Option value="Nam">Nam</Option>
-                                    <Option value="Nữ">Nữ</Option>
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                label="Phòng ban"
-                                name="phongBan"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please input!',
-                                    },
-                                ]}
-                            >
-                                <Select>
-                                    <Option value="CNTT">Công nghệ thông tin</Option>
-                                    <Option value="ATTT">An toàn thông tin</Option>
-                                    <Option value="DTVT">Điện tử viễn thông</Option>
-                                </Select>
-                            </Form.Item>
+              {/* Mã nhân viên */}
+              <div className={cx("form-item")}>
+                <label>Mã nhân viên</label>
+                <Controller
+                  name="maNhanVien"
+                  control={control}
+                  render={({ field }) => <Input {...field} disabled={editMode} />}
+                />
+                {errors.maNhanVien && (
+                  <p className={cx("error-message")}>
+                    {errors.maNhanVien.message}
+                  </p>
+                )}
+              </div>
 
-                            <Form.Item
-                                wrapperCol={{
-                                    offset: 6,
-                                    span: 16,
-                                }}
-                            >
-                                <Button style={{ marginRight: "18px" }} type="primary" htmlType="submit">
-                                    Submit
-                                </Button>
-                                <Button onClick={() => setShowForm(false)}>
-                                    Cancel
-                                </Button>
-                            </Form.Item>
-                        </Form>
-                    </div>
+              {/* Username */}
+              <div className={cx("form-item")}>
+                <label>Username</label>
+                <Controller
+                 
+                  name="username"
+                  control={control}
+                  render={({ field }) => <Input {...field} />}
+                />
+                {errors.username && (
+                  <p className={cx("error-message")}>
+                    {errors.username.message}
+                  </p>
+                )}
+              </div>
 
-                </div>
-            )}
+              {/* Họ tên */}
+              <div className={cx("form-item")}>
+                <label>Họ tên</label>
+                <Controller
+                  name="fullname"
+                  control={control}
+                  render={({ field }) => <Input {...field} />}
+                />
+                {errors.fullname && (
+                  <p className={cx("error-message")}>
+                    {errors.fullname.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Ngày sinh */}
+              <div className={cx("form-item")}>
+                <label>Ngày sinh</label>
+                <Controller
+                  name="dob"
+                  control={control}
+                  render={({ field }) => (
+                    <DatePicker
+                      {...field}
+                      style={{ width: "100%" }}
+                      format="DD/MM/YYYY"
+                    />
+                  )}
+                />
+                {errors.dob && (
+                  <p className={cx("error-message")}>{errors.dob.message}</p>
+                )}
+              </div>
+
+              {/* Giới tính */}
+              <div className={cx("form-item")}>
+                <label>Giới tính</label>
+                <Controller
+                  name="gender"
+                  control={control}
+                  render={({ field }) => (
+                    <Select {...field} placeholder="Chọn giới tính">
+                      <Select.Option value="Nam">Nam</Select.Option>
+                      <Select.Option value="Nữ">Nữ</Select.Option>
+                    </Select>
+                  )}
+                />
+                {errors.gender && (
+                  <p className={cx("error-message")}>{errors.gender.message}</p>
+                )}
+              </div>
+
+              {/* Phòng ban */}
+              <div className={cx("form-item")}>
+                <label>Phòng ban</label>
+                <Controller
+                  name="phongBan"
+                  control={control}
+                  render={({ field }) => (
+                    <Select {...field} placeholder="Chọn phòng ban">
+                      <Select.Option value="CNTT">
+                        Công nghệ thông tin
+                      </Select.Option>
+                      <Select.Option value="ATTT">
+                        An toàn thông tin
+                      </Select.Option>
+                      <Select.Option value="DTVT">
+                        Điện tử viễn thông
+                      </Select.Option>
+                    </Select>
+                  )}
+                />
+                {errors.phongBan && (
+                  <p className={cx("error-message")}>
+                    {errors.phongBan.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Điện thoại */}
+              <div className={cx("form-item")}>
+                <label>Điện thoại</label>
+                <Controller
+                  name="dienThoai"
+                  control={control}
+                  render={({ field }) => <Input {...field} />}
+                />
+                {errors.dienThoai && (
+                  <p className={cx("error-message")}>
+                    {errors.dienThoai.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Địa chỉ hiện nay */}
+              <div className={cx("form-item")}>
+                <label>Địa chỉ hiện nay</label>
+                <Controller
+                  name="diaChiHienNay"
+                  control={control}
+                  render={({ field }) => <Input {...field} />}
+                />
+                {errors.diaChiHienNay && (
+                  <p className={cx("error-message")}>{errors.diaChiHienNay.message}</p>
+                )}
+              </div>
+
+              {/* Chức vụ */}
+              <div className={cx("form-item")}>
+                <label>Chức vụ</label>
+                <Controller
+                  name="chucVu"
+                  control={control}
+                  render={({ field }) => <Input {...field} />}
+                />
+                {errors.chucVu && (
+                  <p className={cx("error-message")}>{errors.chucVu.message}</p>
+                )}
+              </div>
+
+              {/* Môn giảng dạy chính */}
+              <div className={cx("form-item")}>
+                <label>Môn giảng dạy chính</label>
+                <Controller
+                  name="monGiangDayChinh"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      showSearch
+                      allowClear
+                      placeholder="Chọn hoặc tìm kiếm môn học"
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                      }
+                    >
+                      {subjects.map((subject) => (
+                        <Select.Option key={subject.monHocID} value={subject.tenMonHoc} label={subject.tenMonHoc}>
+                          {subject.tenMonHoc}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  )}
+                />
+                {errors.monGiangDayChinh && <p className={cx("error-message")}>{errors.monGiangDayChinh.message}</p>}
+              </div>
+
+              <div
+                className={cx(
+                  "form-item",
+                  "form-item-full-width",
+                  "form-actions"
+                )}
+              >
+                <Button
+                  style={{ marginRight: "18px" }}
+                  type="primary"
+                  htmlType="submit"
+                >
+                  {editMode ? "Cập nhật" : "Thêm"}
+                </Button>
+                <Button onClick={() => {
+                  setShowForm(false);
+                  setEditMode(false);
+                  setCurrentEmployee({});
+                  reset();
+                }}>Cancel</Button>
+              </div>
+            </form>
+          </div>
         </div>
-    );
+      )}
+    </div>
+  );
 }
 
 export default EmployeeManagement;

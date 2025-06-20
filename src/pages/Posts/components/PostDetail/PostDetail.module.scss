@@ -38,7 +38,14 @@
 
     .contents {
         margin-top: 20px;
+        font-size: 22px;
+        img{
+            width: 100%;
+            padding: 0 20px;
+            object-fit: cover;
+           
 
+        }
         p,
         h1,
         h2,
