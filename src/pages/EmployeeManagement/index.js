@@ -29,7 +29,7 @@ const schema = yup.object().shape({
     .min(1, "Vui lòng tải lên ảnh đại diện.")
     .required("Vui lòng tải lên ảnh đại diện."),
   maNhanVien: yup.string().required("Mã nhân viên là bắt buộc."),
-  username: yup.string().required("Tên đăng nhập là bắt buộc."),
+ 
   fullname: yup.string().required("Họ tên là bắt buộc."),
   dob: yup
     .date()
@@ -43,7 +43,13 @@ const schema = yup.object().shape({
     .matches(/^[0-9]+$/, "Chỉ được nhập số."),
   diaChiHienNay: yup.string().required("Địa chỉ hiện nay là bắt buộc."),
   chucVu: yup.string().required("Chức vụ là bắt buộc."),
-  monGiangDayChinh: yup.string().required("Vui lòng chọn môn giảng dạy chính."),
+  monGiangDayChinh: yup.string().transform((value, originalValue) => {
+    if (typeof originalValue === 'object' && originalValue !== null) {
+      return ''; 
+    }
+    return originalValue;
+  })
+  .required("Vui lòng chọn môn giảng dạy chính."),
 });
 
 function EmployeeManagement() {
@@ -74,6 +80,7 @@ function EmployeeManagement() {
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
+   
   });
 
   const apiURL = url + "/api/nhanvien";
@@ -148,7 +155,18 @@ function EmployeeManagement() {
   const handleAddEmployee = () => {
     setEditMode(false);
     setCurrentEmployee({});
-    reset();
+    reset({
+      avatar: [],
+      maNhanVien: "",
+      fullname: "",
+      dob: null,
+      gender: undefined,
+      phongBan: undefined,
+      dienThoai: "",
+      diaChiHienNay: "",
+      chucVu: "",
+      monGiangDayChinh: undefined,
+    }); // Clear form data
     setShowForm(true);
   };
 
@@ -179,36 +197,52 @@ function EmployeeManagement() {
     });
   };
 
-  // Lưu nhân viên
-  const handleSaveEmployee = async () => {
-    const method = editMode ? "PUT" : "POST";
-    const url = editMode ? `${apiURL}/${currentEmployee.idUser}` : apiURL;
-
+  // Cập nhật nhân viên
+  const handleUpdateEmployee = async (data) => {
     const formData = new FormData();
-    Object.entries(currentEmployee).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
 
+    formData.append("maNhanVien", currentEmployee.maNhanVien);
+    formData.append("tenNhanVien", data.fullname);
+    formData.append("gioiTinh", data.gender);
+    formData.append("ngaySinh", dayjs(data.dob).format("YYYY-MM-DD"));
+    formData.append("maPhongBan", data.phongBan);
+    formData.append("dienThoai", data.dienThoai);
+    formData.append("diaChiHienNay", data.diaChiHienNay);
+    formData.append("chucVu", data.chucVu);
+    formData.append("monGiangDayChinh", data.monGiangDayChinh);
+
+    if (data.avatar && data.avatar.length > 0) {
+      formData.append("file", data.avatar[0].originFileObj);
+    }
+   
     try {
-      const token = localStorage.getItem("auth_token");
-      const response = await fetch(url, {
-        method,
-        headers: { Authorization: `Bearer ${token}` },
+      const response = await fetch(`${apiURL}/${currentEmployee.idUser}`, {
+        method: "PUT",
         body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
+
       if (response.ok) {
-        alert(`${editMode ? "Cập nhật" : "Thêm"} nhân viên thành công!`);
+        alert("Cập nhật nhân viên thành công");
         setShowForm(false);
+        setEditMode(false);
+        setCurrentEmployee({});
+        reset();
         fetchEmployees(pagination.currentPage);
       } else {
-        alert(`${editMode ? "Cập nhật" : "Thêm"} nhân viên thất bại!`);
+        const errorData = await response.json();
+        alert(errorData.message);
       }
     } catch (error) {
-      alert("Lỗi khi lưu nhân viên!");
+      console.error("Error:", error);
+      alert("Có lỗi xảy ra, vui lòng thử lại.");
     }
   };
 
-  const onSubmit = async (data) => {
+  // Thêm nhân viên mới
+  const handleAddNewEmployee = async (data) => {
     const formData = new FormData();
 
     formData.append("maNhanVien", data.maNhanVien);
@@ -227,11 +261,8 @@ function EmployeeManagement() {
     }
 
     try {
-      const method = editMode ? "PUT" : "POST";
-      const apiEndpoint = editMode ? `${apiURL}/${currentEmployee.idUser}` : `${apiURL}`;
-      
-      const response = await fetch(apiEndpoint, {
-        method,
+      const response = await fetch(apiURL, {
+        method: "POST",
         body: formData,
         headers: {
           Authorization: `Bearer ${token}`,
@@ -239,20 +270,26 @@ function EmployeeManagement() {
       });
 
       if (response.ok) {
-        alert(`${editMode ? "Cập nhật" : "Thêm"} nhân viên thành công`);
+        alert("Thêm nhân viên thành công");
         setShowForm(false);
-        setEditMode(false);
-        setCurrentEmployee({});
-        reset();
+        reset(); // Clear form after successful addition
         fetchEmployees(pagination.currentPage);
       } else {
         const errorData = await response.json();
-        const errorMessage = errorData.message || `${editMode ? "Cập nhật" : "Thêm"} nhân viên thất bại`;
+        const errorMessage = errorData.message || "Thêm nhân viên thất bại";
         alert(errorMessage);
       }
     } catch (error) {
       console.error("Error:", error);
       alert("Có lỗi xảy ra, vui lòng thử lại.");
+    }
+  };
+
+  const onSubmit = async (data) => {
+    if (editMode) {
+      await handleUpdateEmployee(data);
+    } else {
+      await handleAddNewEmployee(data);
     }
   };
 
@@ -367,21 +404,6 @@ function EmployeeManagement() {
                 )}
               </div>
 
-              {/* Username */}
-              <div className={cx("form-item")}>
-                <label>Username</label>
-                <Controller
-                 
-                  name="username"
-                  control={control}
-                  render={({ field }) => <Input {...field} />}
-                />
-                {errors.username && (
-                  <p className={cx("error-message")}>
-                    {errors.username.message}
-                  </p>
-                )}
-              </div>
 
               {/* Họ tên */}
               <div className={cx("form-item")}>
@@ -514,6 +536,7 @@ function EmployeeManagement() {
                       {...field}
                       showSearch
                       allowClear
+                      
                       placeholder="Chọn hoặc tìm kiếm môn học"
                       optionFilterProp="children"
                       filterOption={(input, option) =>

@@ -1,11 +1,15 @@
 import React from "react";
 import styles from "./SubjectCard.module.scss";
+import classNames from "classnames/bind";
 
-const SubjectCard = ({ color, credits, subjectName }) => {
+const cx = classNames.bind(styles);
+
+const SubjectCard = ({ subject }) => {
   return (
-    <div className={styles["subject-card"]} style={{ borderLeft: `6px solid ${color}` }}>
-      <div className={styles["subject-card__badge"]}>{credits} tín chỉ</div>
-      <div className={styles["subject-card__name"]}>{subjectName}</div>
+    <div className={cx("subject-card")}>
+      <div className={cx("subject-card-badge")}>{subject.soTinChi} tín chỉ</div>
+      <h4 className={cx("subject-card-name")}>{subject.tenMon}</h4>
+      <p className={cx("subject-card-description")}>{subject.moTa}</p>
     </div>
   );
 };

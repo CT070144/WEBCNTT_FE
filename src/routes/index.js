@@ -22,6 +22,7 @@ import AddLMI from "~/pages/CRUDNavbar/components/AddLMI";
 import CreateDiscussion from "~/pages/Forum/components/CreateDiscussion";
 import PendingDiscussions from "~/pages/Forum/components/PendingDiscussion";
 import TrainingProgram from "~/pages/TrainingProgram";
+import ProgramDetail from "~/pages/TrainingProgram/ProgramDetail";
 import General from "~/pages/Introduce/General";
 
 const allowAll = ['ROLE_ADMIN', 'ROLE_EMPLOYEE', 'ROLE_STUDENT'];
@@ -40,6 +41,7 @@ const publicRoutes = [
     { path: '/introducedetail/:slug', component: EmployeeDetail },
     { path: '/:slug', component: MenuItemDetail },
     { path: '/training-program', component: TrainingProgram },
+    { path: '/training-program/:id', component: ProgramDetail },
     { path: '/gioi-thieu-chung', component: General }
 ]
 
