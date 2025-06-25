@@ -4,6 +4,7 @@ import styles from "./ProgramDetail.module.scss";
 import classNames from "classnames/bind";
 import SubjectCard from "../SubjectCard/SubjectCard";
 
+
 const cx = classNames.bind(styles);
 
 // Mock data for training programs
@@ -12,7 +13,7 @@ const mockTrainingPrograms = {
     id: 1,
     name: "Trí tuệ nhân tạo",
     code: "7480201",
-    duration: "4 năm",
+    duration: "5 năm",
     campus: "Hà Nội",
     admissionPeriod: "Tháng 9",
     overview: "Chương trình đào tạo Trí tuệ nhân tạo trang bị cho sinh viên kiến thức chuyên sâu về machine learning, deep learning, xử lý ngôn ngữ tự nhiên và computer vision. Sinh viên được đào tạo để phát triển các ứng dụng AI hiện đại và giải quyết các bài toán thực tế bằng trí tuệ nhân tạo.",
@@ -43,7 +44,7 @@ const mockTrainingPrograms = {
     ],
     tuition: {
       domestic: "18.000.000 VNĐ/năm",
-      international: "28.000.000 VNĐ/năm",
+    
       notes: "Học phí bao gồm chi phí thực hành và tài nguyên AI chuyên dụng."
     },
     requirements: [
@@ -63,7 +64,7 @@ const mockTrainingPrograms = {
     id: 2,
     name: "Công nghệ Internet vạn vật (IoT)",
     code: "7480202",
-    duration: "4 năm",
+    duration: "5 năm",
     campus: "Hà Nội",
     admissionPeriod: "Tháng 9",
     overview: "Chương trình đào tạo Công nghệ Internet vạn vật (IoT) cung cấp kiến thức về hệ thống nhúng, cảm biến, mạng không dây và ứng dụng IoT. Sinh viên được trang bị kỹ năng thiết kế và triển khai các giải pháp IoT cho smart city, smart home và các ứng dụng công nghiệp.",
@@ -94,7 +95,7 @@ const mockTrainingPrograms = {
     ],
     tuition: {
       domestic: "16.000.000 VNĐ/năm",
-      international: "26.000.000 VNĐ/năm",
+    
       notes: "Học phí bao gồm chi phí thực hành và thiết bị IoT chuyên dụng."
     },
     requirements: [
@@ -114,7 +115,7 @@ const mockTrainingPrograms = {
     id: 3,
     name: "Lập trình Android và di động",
     code: "7480203",
-    duration: "4 năm",
+    duration: "5 năm",
     campus: "Hà Nội",
     admissionPeriod: "Tháng 9",
     overview: "Chương trình đào tạo Lập trình Android và di động chuyên sâu về phát triển ứng dụng di động, UI/UX design, và các công nghệ mobile hiện đại. Sinh viên được đào tạo để tạo ra các ứng dụng mobile chất lượng cao cho Android và các nền tảng di động khác.",
@@ -145,7 +146,6 @@ const mockTrainingPrograms = {
     ],
     tuition: {
       domestic: "17.000.000 VNĐ/năm",
-      international: "27.000.000 VNĐ/năm",
       notes: "Học phí bao gồm chi phí thực hành và thiết bị mobile development."
     },
     requirements: [
@@ -828,7 +828,9 @@ const TrainingProgram = () => {
                 {program.materials && program.materials.length > 0 ? (
                   program.materials.map((material, index) => (
                     <div key={index} className={cx("material-item")}>
-                      <span className={cx("material-icon")}>📚</span>
+                      <span className={cx("material-icon")}>
+                        📑
+                      </span>
                       <span className={cx("material-text")}>{material}</span>
                     </div>
                   ))

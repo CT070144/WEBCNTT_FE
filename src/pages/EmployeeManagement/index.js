@@ -11,6 +11,7 @@ import {
   Space,
   Table,
   Upload,
+  Modal,
 } from "antd";
 import Column from "antd/es/table/Column";
 import { UploadOutlined } from "@ant-design/icons";
@@ -18,6 +19,7 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import dayjs from "dayjs";
+import { toast } from 'react-toastify';
 
 const cx = classNames.bind(styles);
 const url = process.env.REACT_APP_API_URL;
@@ -59,7 +61,7 @@ function EmployeeManagement() {
   const [pagination, setPagination] = useState({
     currentPage: 0,
     totalPages: 0,
-    pageSize: 10,
+    pageSize: 5,
   });
   const [showForm, setShowForm] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -104,7 +106,7 @@ function EmployeeManagement() {
         pageSize: data.pageSize,
       });
     } catch (error) {
-      alert("Lỗi khi lấy danh sách nhân viên!");
+      toast.error("Lỗi khi lấy danh sách nhân viên!");
     }
   };
 
@@ -122,7 +124,7 @@ function EmployeeManagement() {
         console.error("Failed to fetch subjects");
       }
     } catch (error) {
-      alert("Lỗi khi lấy danh sách môn học!");
+      toast.error("Lỗi khi lấy danh sách môn học!");
     }
   };
 
@@ -133,22 +135,28 @@ function EmployeeManagement() {
 
   // Xóa nhân viên
   const handleDeleteEmployee = async (idUser) => {
-    if (!window.confirm("Bạn có chắc chắn muốn xóa nhân viên này?")) return;
-
-    try {
-      const response = await fetch(`${apiURL}/${idUser}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (response.ok) {
-        alert("Xóa nhân viên thành công!");
-        fetchEmployees(pagination.currentPage);
-      } else {
-        alert("Xóa nhân viên thất bại!");
-      }
-    } catch (error) {
-      alert("Lỗi khi xóa nhân viên!");
-    }
+    Modal.confirm({
+      title: "Xác nhận xoá",
+      content: "Bạn có chắc chắn muốn xóa nhân viên này?",
+      okText: "Xoá",
+      cancelText: "Huỷ",
+      onOk: async () => {
+        try {
+          const response = await fetch(`${apiURL}/${idUser}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (response.ok) {
+            toast.success("Xóa nhân viên thành công!");
+            fetchEmployees(pagination.currentPage);
+          } else {
+            toast.error("Xóa nhân viên thất bại!");
+          }
+        } catch (error) {
+          toast.error("Lỗi khi xóa nhân viên!");
+        }
+      },
+    });
   };
 
   // Thêm nhân viên
@@ -225,7 +233,7 @@ function EmployeeManagement() {
       });
 
       if (response.ok) {
-        alert("Cập nhật nhân viên thành công");
+        toast.success("Cập nhật nhân viên thành công");
         setShowForm(false);
         setEditMode(false);
         setCurrentEmployee({});
@@ -233,11 +241,11 @@ function EmployeeManagement() {
         fetchEmployees(pagination.currentPage);
       } else {
         const errorData = await response.json();
-        alert(errorData.message);
+        toast.error(errorData.message);
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("Có lỗi xảy ra, vui lòng thử lại.");
+      toast.error("Có lỗi xảy ra, vui lòng thử lại.");
     }
   };
 
@@ -270,18 +278,18 @@ function EmployeeManagement() {
       });
 
       if (response.ok) {
-        alert("Thêm nhân viên thành công");
+        toast.success("Thêm nhân viên thành công");
         setShowForm(false);
         reset(); // Clear form after successful addition
         fetchEmployees(pagination.currentPage);
       } else {
         const errorData = await response.json();
         const errorMessage = errorData.message || "Thêm nhân viên thất bại";
-        alert(errorMessage);
+        toast.error(errorMessage);
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("Có lỗi xảy ra, vui lòng thử lại.");
+      toast.error("Có lỗi xảy ra, vui lòng thử lại.");
     }
   };
 
@@ -306,7 +314,7 @@ function EmployeeManagement() {
           position: "bottom",
           align: "center",
           onChange: (page) => {
-            fetchEmployees(page - 1);
+            fetchEmployees(page);
           },
           pageSize: 5,
         }}
@@ -562,7 +570,8 @@ function EmployeeManagement() {
                 )}
               >
                 <Button
-                  style={{ marginRight: "18px" }}
+                  className={cx("submit-button")}
+                 
                   type="primary"
                   htmlType="submit"
                 >

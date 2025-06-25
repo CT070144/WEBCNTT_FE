@@ -1,11 +1,185 @@
 .container {
     width: 100%;
-    height: 80vh;
+    min-height: 90vh;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 24px 20px;
+    background: #f8fafc;
+    font-family: 'Segoe UI', Arial, sans-serif;
 
     .form {
-        width: 50%;
+        width: 100%;
+        max-width: 700px;
+        background: #fff;
+        padding: 32px 28px;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e3eafc;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        }
+
+        // Antd Form customization
+        .ant-form-item {
+            margin-bottom: 24px;
+
+            .ant-form-item-label {
+                label {
+                    font-weight: 600;
+                    color: #374151;
+                    font-size: 15px;
+                }
+            }
+
+            .ant-input,
+            .ant-input-affix-wrapper,
+            .ant-picker,
+            .ant-select-selector {
+                border: 2px solid #e5e7eb;
+                border-radius: 8px;
+                padding: 10px 12px;
+                font-size: 15px;
+                background: #f9fafb;
+                transition: all 0.2s ease;
+
+                &:hover {
+                    border-color: var(--primary, #1976d2);
+                }
+
+                &:focus,
+                &.ant-input-focused,
+                &.ant-select-focused .ant-select-selector {
+                    border-color: var(--primary, #1976d2);
+                    background: #fff;
+                    box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+                }
+            }
+
+            .ant-input-textarea {
+                .ant-input {
+                    min-height: 100px;
+                    resize: vertical;
+                }
+            }
+        }
+
+        // Divider customization
+        .ant-divider {
+            margin: 24px 0 32px 0;
+
+            .ant-divider-inner-text {
+                h2 {
+                    color: var(--primary, #1a237e);
+                    font-size: 1.5rem;
+                    font-weight: 700;
+                    letter-spacing: 0.5px;
+                }
+            }
+        }
+
+        // Upload customization
+        .ant-upload {
+            .ant-btn {
+                background: var(--primary, #1976d2);
+                border: none;
+                border-radius: 8px;
+                font-weight: 600;
+                transition: all 0.2s ease;
+                box-shadow: 0 2px 8px rgba(25, 118, 210, 0.2);
+
+                &:hover {
+                    background: #1565c0;
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+                }
+            }
+        }
+
+        // Submit button customization
+        .ant-form-item:last-child {
+            margin-bottom: 0;
+            margin-top: 32px;
+
+            .ant-btn {
+                background: var(--primary, #1976d2);
+                border: none;
+                border-radius: 8px;
+                padding: 12px 24px;
+                font-size: 16px;
+                font-weight: 600;
+                height: auto;
+                transition: all 0.2s ease;
+                box-shadow: 0 4px 12px rgba(25, 118, 210, 0.2);
+
+                &:hover {
+                    background: #1565c0;
+                    transform: translateY(-2px);
+                    box-shadow: 0 6px 16px rgba(25, 118, 210, 0.3);
+                }
+
+                &:active {
+                    transform: translateY(0) scale(0.98);
+                }
+            }
+        }
+    }
+}
+
+// Responsive
+@media (max-width: 768px) {
+    .container {
+        padding: 16px;
+        min-height: auto;
+        
+        .form {
+            padding: 24px 20px;
+            
+            .ant-form-item {
+                margin-bottom: 20px;
+            }
+            
+            .ant-divider {
+                margin: 20px 0 24px 0;
+                
+                .ant-divider-inner-text h2 {
+                    font-size: 1.3rem;
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 12px;
+        
+        .form {
+            padding: 20px 16px;
+            
+            .ant-form-item {
+                margin-bottom: 16px;
+                
+                .ant-form-item-label label {
+                    font-size: 14px;
+                }
+                
+                .ant-input,
+                .ant-input-affix-wrapper,
+                .ant-picker,
+                .ant-select-selector {
+                    padding: 8px 10px;
+                    font-size: 14px;
+                }
+            }
+            
+            .ant-form-item:last-child .ant-btn {
+                padding: 10px 20px;
+                font-size: 15px;
+            }
+        }
     }
 }

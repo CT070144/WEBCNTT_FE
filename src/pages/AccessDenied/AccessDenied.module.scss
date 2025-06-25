@@ -1,0 +1,46 @@
+.accessDeniedContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 70vh;
+    text-align: center;
+    background-color: #f8f9fa;
+    font-family: 'Arial', sans-serif;
+}
+
+.title {
+    font-size: 5rem;
+    font-weight: bold;
+    color: #dc3545;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    color: #6c757d;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.message {
+    font-size: 1.1rem;
+    color: #343a40;
+    margin-bottom: 30px;
+}
+
+.homeLink {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: #fff;
+    background-color: #007bff;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+        background-color: #0056b3;
+    }
+} 

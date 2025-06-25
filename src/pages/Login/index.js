@@ -57,15 +57,15 @@ const Login = () => {
 
                setTimeout(() => {
                 window.location.replace("/admin");
-               }, 1000);
+               }, 500);
             } else if (decodedToken.roles[0].includes("ROLE_EMPLOYEE")) {
                 setTimeout(() => {
                     window.location.replace("/employee");
-                }, 1000);
+                }, 500);
             } else {
                 setTimeout(() => {
                     window.location.replace("/student");
-                }, 1000);
+                }, 500);
             }
             toast.success("Đăng nhập thành công",{
                 position: "top-right",

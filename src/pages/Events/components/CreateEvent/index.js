@@ -184,7 +184,7 @@ function CreateEvent() {
                     }}
                 >
                     <Button type="primary" htmlType="submit">
-                        Submit
+                       Tạo sự kiện
                     </Button>
                 </Form.Item>
             </Form>

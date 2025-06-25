@@ -9,6 +9,7 @@ import { ConfigProvider } from "antd";
 import { createStyles } from "antd-style";
 import { UserLayout } from "~/components/Layouts";
 import { ToastContainer } from "react-toastify";
+import AccessDenied from "./pages/AccessDenied";
 
 const useStyle = createStyles(({ prefixCls, css }) => ({
   linearGradientButton: css`
@@ -104,10 +105,7 @@ function App() {
                             <Element />
                           </Layout>
                         ) : (
-                          <div>
-                            <h2>Không có quyền truy cập</h2>
-                            <p>Xin lỗi, bạn không có quyền truy cập vào trang này.</p>
-                          </div>
+                          <AccessDenied />
                         )
                       ) : (
                         <Navigate to="/login" />

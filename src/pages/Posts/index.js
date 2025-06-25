@@ -318,7 +318,8 @@ function Posts() {
                     posts.map((post) => (
                         <div key={post.postId} className={cx("post-item")}>
                             <div className={cx("post-image")}>
-                                <img src={post.file_dto[0] ? (url + post.file_dto[0].downloadUrl) : "https://actvn.edu.vn/News/GetImage/28237"} alt=""></img>
+                             
+                            <img src={post.file_dto[0] ? (url + post.file_dto[0].downloadUrl) : "https://actvn.edu.vn/News/GetImage/28237"} alt="" ></img>
                             </div>
                             <div className={cx("post-content")}>
                                 <Link to={`/posts/${post.postId}`} className={cx("post-title")}>{post.title}</Link>

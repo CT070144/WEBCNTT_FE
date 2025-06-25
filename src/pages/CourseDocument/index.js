@@ -5,6 +5,7 @@ import { Button, Divider, Form, Input, InputNumber, Modal, Select, Upload } from
 import { Option } from "antd/es/mentions";
 import { UploadOutlined } from "@ant-design/icons";
 import { useAuth } from "~/Authentication/AuthContext";
+import { toast } from "react-toastify";
 
 const cx = classNames.bind(styles);
 
@@ -18,6 +19,9 @@ function CourseDocument() {
     const [currentCourse, setCurrentCourse] = useState(null); // Môn học hiện tại
     const [selectedFiles, setSelectedFiles] = useState([]); // File đã chọn
     const apiURL = "http://localhost:8084/api/monhoc/grouped";
+    const apiURL2 = "http://localhost:8084/api/monhoc";
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [selectedDeleteId, setSelectedDeleteId] = useState(null);
 
     // Fetch danh sách môn học
     const fetchCourses1 = async () => {
@@ -26,6 +30,7 @@ function CourseDocument() {
                 headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
             });
             const data = await response.json();
+            console.log(data);
             setCourses1(data["GENERAL"]);
         } catch (error) {
             console.error("Lỗi khi lấy danh sách môn học:", error);
@@ -70,6 +75,7 @@ function CourseDocument() {
         setSelectedFiles([]);
         setEditMode(false);
         setShowForm(true);
+        form.resetFields(); // Reset form về rỗng
     };
 
     // Mở form chỉnh sửa
@@ -78,6 +84,13 @@ function CourseDocument() {
         setSelectedFiles([]);
         setEditMode(true);
         setShowForm(true);
+        // Đổ dữ liệu cũ vào form nếu dùng antd Form
+        form.setFieldsValue({
+            Input: course.tenMonHoc,
+            descript: course.moTa || course.description,
+            tinchi: course.soTinChi,
+            kind: course.category,
+        });
     };
 
     // Xóa file đã chọn trước khi gửi lên API
@@ -86,19 +99,28 @@ function CourseDocument() {
         setSelectedFiles(updatedFiles);
     };
 
-    // Xóa môn học
-    const handleDeleteCourse = async (idMonHoc) => {
+    // Xóa môn học (gọi API, không xác nhận ở đây)
+    const confirmDeleteCourse = async () => {
         try {
-            await fetch(`${apiURL}/${idMonHoc}`, {
+            await fetch(`${apiURL2}/${selectedDeleteId}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
             });
             fetchCourses1();
             fetchCourses2();
             fetchCourses3();
+            setShowDeleteModal(false);
+            setSelectedDeleteId(null);
+            toast.success("Xóa môn học thành công");
         } catch (error) {
-            console.error("Lỗi khi xóa môn học:", error);
+            toast.error("Lỗi khi xóa môn học");
         }
+    };
+
+    // Khi bấm nút Xóa
+    const handleDeleteCourse = (monHocID) => {
+        setSelectedDeleteId(monHocID);
+        setShowDeleteModal(true);
     };
 
     // Xử lý chọn file
@@ -110,6 +132,11 @@ function CourseDocument() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const showModal = () => {
         setIsModalOpen(true);
+        setCurrentCourse({ tenMonHoc: "", moTa: "", soTinChi: "" });
+        setSelectedFiles([]);
+        setEditMode(false);
+        form.resetFields(); // Reset form về rỗng
+    
     };
     const handleOk = () => {
         setIsModalOpen(false);
@@ -118,57 +145,18 @@ function CourseDocument() {
         setIsModalOpen(false);
     };
 
-    // Lưu môn học
-    const handleSaveCourse = async () => {
-        const formData = new FormData();
-        formData.append("tenMonHoc", currentCourse.tenMonHoc);
-        formData.append("moTa", currentCourse.moTa);
-        formData.append("soTinChi", currentCourse.soTinChi);
-
-        selectedFiles.forEach((file) => {
-            formData.append("file", file); // Tất cả file dùng field "file"
-        });
-
-        const method = editMode ? "PUT" : "POST";
-        const url = editMode ? `${apiURL}/${currentCourse.idMonHoc}` : apiURL;
-
-        try {
-            await fetch(url, {
-                method,
-                headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
-                body: formData,
-            });
-            setShowForm(false);
-            fetchCourses1();
-            fetchCourses2();
-            fetchCourses3();
-        } catch (error) {
-            console.error("Lỗi khi lưu môn học:", error);
-        }
-    };
-
-    const [form] = Form.useForm();
+    // Lưu môn học (dùng cho modal Form)
     const onFinish = async (values) => {
         const formData = new FormData();
-
-        // Thêm các trường dữ liệu từ form
         formData.append("tenMonHoc", values.Input);
         formData.append("moTa", values.descript);
         formData.append("soTinChi", values.tinchi);
         formData.append("category", values.kind);
-        // Tên sự kiện
-        // Xử lý file upload
         if (values.document && values.document.length > 0) {
             values.document.forEach((file) => {
-                formData.append("file", file.originFileObj); // Tất cả đều có key "file"
+                formData.append("file", file.originFileObj);
             });
         }
-
-        for (let [key, value] of formData.entries()) {
-            console.log(`${key}:`, value);
-        }
-
-        // Gửi FormData qua Fetch API
         try {
             const response = await fetch("http://localhost:8084/api/monhoc", {
                 method: "POST",
@@ -177,21 +165,21 @@ function CourseDocument() {
                     "Authorization": `Bearer ${token}`
                 }
             });
-
             if (response.ok) {
-                alert("Thêm môn học thành công");
+                toast.success("Thêm môn học thành công");
+                setIsModalOpen(false);
             } else {
-                console.error("Failed:", response.statusText);
+                toast.error("Thêm môn học thất bại");
             }
         } catch (error) {
-            console.error("Error:", error);
+            toast.error("Error: " + error);
         }
-
         fetchCourses1();
         fetchCourses2();
         fetchCourses3();
     };
 
+    const [form] = Form.useForm();
     const normFile = (e) => {
         console.log('Upload event:', e);
         if (Array.isArray(e)) {
@@ -200,19 +188,61 @@ function CourseDocument() {
         return e?.fileList;
     };
 
+    // Thêm hàm handleSaveCourse cho chế độ sửa:
+    const handleSaveCourse = async (values) => {
+        const formData = new FormData();
+        formData.append("tenMonHoc", values.Input);
+        formData.append("moTa", values.descript);
+        formData.append("soTinChi", values.tinchi);
+        formData.append("category", values.kind);
+        if (values.document && values.document.length > 0) {
+            values.document.forEach((file) => {
+                formData.append("file", file.originFileObj);
+            });
+        }
+        try {
+            const response = await fetch(`${apiURL2}/${currentCourse.monHocID}`, {
+                method: "PUT",
+                body: formData,
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            if (response.ok) {
+                toast.success("Cập nhật môn học thành công");
+                setShowForm(false);
+            } else {
+                toast.error("Cập nhật môn học thất bại");
+            }
+        } catch (error) {
+            toast.error("Error: " + error);
+        }
+        fetchCourses1();
+        fetchCourses2();
+        fetchCourses3();
+    };
+
     return (
         <div className={cx("course-document")}>
             <div className={cx("title-school")}>
                 <img src="https://actvn-edu.appspot.com/resources/images/hvmm/tag-nganh.svg" />
                 <span>
                     CÔNG NGHỆ THÔNG TIN</span>
-                {(user.roles.includes("ROLE_ADMIN") || user.roles.includes("ROLE_EMPLOYEE")) && <Button onClick={showModal} className={cx("add-button")}>Thêm Môn Học</Button>}
-                <Modal title="Thêm môn học mới" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+                {user && user.roles && (user.roles.includes("ROLE_ADMIN") || user.roles.includes("ROLE_EMPLOYEE")) && <Button onClick={showModal} className={cx("add-button")}>Thêm Môn Học</Button>}
+                <Modal title="Thêm môn học mới" open={isModalOpen} onCancel={handleCancel}
+                    footer={[
+                        <Button key="cancel" onClick={handleCancel}>
+                            Cancel
+                        </Button>,
+                        <Button key="submit" type="primary" htmlType="submit" form="add-course-form">
+                            Submit
+                        </Button>,
+                    ]}
+                >
                     <Form
+                        id="add-course-form"
                         form={form}
-                        style={{
-                            maxWidth: 600,
-                        }}
+                        style={{ maxWidth: 600 }}
                         className={cx("form")}
                         onFinish={onFinish}
                     >
@@ -284,16 +314,6 @@ function CourseDocument() {
                                 <Option value="SPECIALIZED">Chuyên ngành</Option>
                             </Select>
                         </Form.Item>
-                        <Form.Item
-                            wrapperCol={{
-                                offset: 6,
-                                span: 16,
-                            }}
-                        >
-                            <Button type="primary" htmlType="submit">
-                                Submit
-                            </Button>
-                        </Form.Item>
                     </Form>
                 </Modal>
             </div>
@@ -325,11 +345,11 @@ function CourseDocument() {
                         </div> */}
 
                         {/* Hành động */}
-                        {!user.roles.includes("ROLE_STUDENT") && <div className={cx("actions")}>
+                        {user && user.roles && !user.roles.includes("ROLE_STUDENT") && <div className={cx("actions")}>
                             <button onClick={() => handleEditCourse(course)} className={cx("edit-button")}>
                                 Sửa
                             </button>
-                            <button onClick={() => handleDeleteCourse(course.idMonHoc)} className={cx("delete-button")}>
+                            <button onClick={() => handleDeleteCourse(course.monHocID)} className={cx("delete-button")}>
                                 Xóa
                             </button>
                         </div>}
@@ -362,11 +382,11 @@ function CourseDocument() {
                         </div> */}
 
                         {/* Hành động */}
-                        {!user.roles.includes("ROLE_STUDENT") && <div className={cx("actions")}>
+                        {user && user.roles && !user.roles.includes("ROLE_STUDENT") && <div className={cx("actions")}>
                             <button onClick={() => handleEditCourse(course)} className={cx("edit-button")}>
                                 Sửa
                             </button>
-                            <button onClick={() => handleDeleteCourse(course.idMonHoc)} className={cx("delete-button")}>
+                                <button onClick={() => handleDeleteCourse(course.monHocID)} className={cx("delete-button")}>
                                 Xóa
                             </button>
                         </div>}
@@ -399,11 +419,11 @@ function CourseDocument() {
                         </div> */}
 
                         {/* Hành động */}
-                        {!user.roles.includes("ROLE_STUDENT") && <div className={cx("actions")}>
+                        {user && user.roles && !user.roles.includes("ROLE_STUDENT") && <div className={cx("actions")}>
                             <button onClick={() => handleEditCourse(course)} className={cx("edit-button")}>
                                 Sửa
                             </button>
-                            <button onClick={() => handleDeleteCourse(course.idMonHoc)} className={cx("delete-button")}>
+                            <button onClick={() => handleDeleteCourse(course.monHocID)} className={cx("delete-button")}>
                                 Xóa
                             </button>
                         </div>}
@@ -415,38 +435,77 @@ function CourseDocument() {
             {showForm && (
                 <div className={cx("form-overlay")}>
                     <div className={cx("form-container")}>
-                        <h3>{editMode ? "Chỉnh Sửa Môn Học" : "Thêm Môn Học"}</h3>
-                        <input
-                            type="text"
-                            placeholder="Tên Môn Học"
-                            value={currentCourse.tenMonHoc}
-                            onChange={(e) => setCurrentCourse({ ...currentCourse, tenMonHoc: e.target.value })}
-                        />
-                        <textarea
-                            placeholder="Mô Tả"
-                            value={currentCourse.moTa}
-                            onChange={(e) => setCurrentCourse({ ...currentCourse, moTa: e.target.value })}
-                        />
-                        <input
-                            type="number"
-                            placeholder="Số Tín Chỉ"
-                            value={currentCourse.soTinChi}
-                            onChange={(e) => setCurrentCourse({ ...currentCourse, soTinChi: e.target.value })}
-                        />
+                        <h3 style={{ color: '#e53935', textAlign: 'center', marginBottom: 20 }}>{editMode ? "Chỉnh Sửa Môn Học" : "Thêm Môn Học"}</h3>
+                        <Form
+                            form={form}
+                            style={{ maxWidth: 600 }}
+                            className={cx("form")}
+                            onFinish={editMode ? handleSaveCourse : onFinish}
+                        >
+                            <Form.Item
+                                label="Tên môn học"
+                                name="Input"
+                                rules={[{ required: true, message: 'Vui lòng nhập tên môn học!' }]}
+                            >
+                                <Input />
+                            </Form.Item>
+                            <Form.Item
+                                label="Mô tả"
+                                name="descript"
+                                rules={[{ required: true, message: 'Vui lòng nhập mô tả!' }]}
+                            >
+                                <Input.TextArea />
+                            </Form.Item>
+                            <Form.Item
+                                label="Số tín chỉ"
+                                name="tinchi"
+                                rules={[{ required: true, message: 'Vui lòng nhập số tín chỉ!' }]}
+                            >
+                                <InputNumber />
+                            </Form.Item>
+                            <Form.Item
+                                label="Tài liệu"
+                                name="document"
+                                valuePropName="fileList"
+                                getValueFromEvent={normFile}
+                            >
+                                <Upload name="doc">
+                                    <Button icon={<UploadOutlined />}>Click to upload</Button>
+                                </Upload>
+                            </Form.Item>
+                            <Form.Item
+                                label="Thể loại"
+                                name="kind"
+                                rules={[{ required: true, message: 'Vui lòng chọn thể loại!' }]}
+                            >
+                                <Select>
+                                    <Option value="GENERAL">Đại cương</Option>
+                                    <Option value="FOUNDATION">Cơ sở ngành</Option>
+                                    <Option value="SPECIALIZED">Chuyên ngành</Option>
+                                </Select>
+                            </Form.Item>
+                            <Form.Item>
+                                {editMode ? (
+                                    <>
+                                        <Button type="primary" htmlType="submit" style={{ marginRight: 8 }}>Lưu</Button>
+                                        <Button onClick={() => setShowForm(false)}>Hủy</Button>
+                                    </>
+                                ) : null}
+                            </Form.Item>
+                        </Form>
+                    </div>
+                </div>
+            )}
 
-                        {/* Upload file */}
-                        <input type="file" multiple onChange={handleFileChange} />
-                        <div className={cx("file-list")}>
-                            {selectedFiles.map((file, index) => (
-                                <div key={index} className={cx("file-item")}>
-                                    {file.name}
-                                    <button onClick={() => handleRemoveFile(index)}>Xóa</button>
-                                </div>
-                            ))}
+            {/* Modal xác nhận xoá */}
+            {showDeleteModal && (
+                <div className={cx("modal-overlay")}> 
+                    <div className={cx("modal-container")}> 
+                        <h3>Xác nhận xoá môn học?</h3>
+                        <div style={{display: 'flex', justifyContent: 'center', gap: 16}}>
+                            <button onClick={confirmDeleteCourse} className={cx("delete-button")}>Xác nhận</button>
+                            <button onClick={() => setShowDeleteModal(false)} className={cx("edit-button")}>Huỷ</button>
                         </div>
-
-                        <button onClick={handleSaveCourse} className={cx("save-button")}>Lưu</button>
-                        <button onClick={() => setShowForm(false)} className={cx("cancel-button")}>Hủy</button>
                     </div>
                 </div>
             )}

@@ -11,7 +11,7 @@ const mockTrainingPrograms = [
     id: 1,
     name: "Trí tuệ nhân tạo",
     code: "7480201",
-    duration: "4 năm",
+    duration: "5 năm",
     campus: "Hà Nội",
     description: "Chương trình đào tạo Trí tuệ nhân tạo trang bị cho sinh viên kiến thức chuyên sâu về machine learning, deep learning, xử lý ngôn ngữ tự nhiên và computer vision. Sinh viên được đào tạo để phát triển các ứng dụng AI hiện đại và giải quyết các bài toán thực tế bằng trí tuệ nhân tạo.",
     image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBL5mApQQxrYzBx9HUFxtjfw4Odr2vAcnGPQ&s://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
@@ -20,7 +20,7 @@ const mockTrainingPrograms = [
     id: 2,
     name: "Công nghệ Internet vạn vật (IoT)",
     code: "7480202",
-    duration: "4 năm",
+    duration: "5 năm",
     campus: "Hà Nội",
     description: "Chương trình đào tạo Công nghệ Internet vạn vật (IoT) cung cấp kiến thức về hệ thống nhúng, cảm biến, mạng không dây và ứng dụng IoT. Sinh viên được trang bị kỹ năng thiết kế và triển khai các giải pháp IoT cho smart city, smart home và các ứng dụng công nghiệp.",
     image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4nFhHXoSvUdS54b3mCz-a8lIXVX1rPhvK0w&s"
@@ -29,7 +29,7 @@ const mockTrainingPrograms = [
     id: 3,
     name: "Lập trình Android và di động",
     code: "7480203",
-    duration: "4 năm",
+    duration: "5 năm",
     campus: "Hà Nội",
     description: "Chương trình đào tạo Lập trình Android và di động chuyên sâu về phát triển ứng dụng di động, UI/UX design, và các công nghệ mobile hiện đại. Sinh viên được đào tạo để tạo ra các ứng dụng mobile chất lượng cao cho Android và các nền tảng di động khác.",
     image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIvqW4h7ytm0HwKDQQrPASueJc11sxf_WdrYimGVUK8Knqj9nNi0uIuzXln0haDGkAVFE&usqp=CAU"

@@ -48,7 +48,7 @@ function Introduce() {
                             className={cx("image")}
                         />
                         <p className={cx("name")}>{employee.tenNhanVien}</p>
-                        <Link to={`/introducedetail/${employee.idUser}`}>Xem chi tiết</Link>
+                        <Link to={`/introducedetail/${employee.idUser}`} className={cx("view-detail")}>Thông tin chi tiết</Link>
                     </div>
                 ))}
             </div>
