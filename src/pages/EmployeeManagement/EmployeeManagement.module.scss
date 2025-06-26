@@ -125,7 +125,7 @@
 
     // Phân trang
     .pagination {
-        display: flex;
+        display: none !important;
         justify-content: center;
         align-items: center;
         margin-top: 20px;

@@ -7,6 +7,7 @@ import { Button } from "antd";
 import { useAuth } from "~/Authentication/AuthContext";
 
 function SpecialEvent() {
+    const navigate = useNavigate();
     const cx = classNames.bind(styles);
     const url = process.env.REACT_APP_API_URL;
     const { user } = useAuth();
@@ -94,8 +95,8 @@ function SpecialEvent() {
                                 <div><i className="fa-solid fa-location-dot"></i> {currentEvent.location}</div>
                             </div>
                             <div className={cx("info-actions")}>
-                                {user && <Button type="primary" className={cx("register")}>Đăng ký ngay</Button>}
-                                <Button className={cx("register")}>Chi tiết</Button>
+                             
+                                <Button className={cx("register")} onClick={() => navigate(`/events/${currentEvent.eventId}`)}>Chi tiết</Button>
                             </div>
                         </div>
                     </div>

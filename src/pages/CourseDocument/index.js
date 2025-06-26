@@ -23,6 +23,10 @@ function CourseDocument() {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedDeleteId, setSelectedDeleteId] = useState(null);
 
+    const userString = localStorage.getItem('user');
+    const userAuth = JSON.parse(userString);
+    const userRole = userAuth ? userAuth.roles : null;
+
     // Fetch danh sách môn học
     const fetchCourses1 = async () => {
         try {
@@ -228,7 +232,7 @@ function CourseDocument() {
                 <img src="https://actvn-edu.appspot.com/resources/images/hvmm/tag-nganh.svg" />
                 <span>
                     CÔNG NGHỆ THÔNG TIN</span>
-                {user && user.roles && (user.roles.includes("ROLE_ADMIN") || user.roles.includes("ROLE_EMPLOYEE")) && <Button onClick={showModal} className={cx("add-button")}>Thêm Môn Học</Button>}
+                {userRole.includes("ROLE_ADMIN")  && <Button onClick={showModal} className={cx("add-button")}>Thêm Môn Học</Button>}
                 <Modal title="Thêm môn học mới" open={isModalOpen} onCancel={handleCancel}
                     footer={[
                         <Button key="cancel" onClick={handleCancel}>
@@ -345,7 +349,7 @@ function CourseDocument() {
                         </div> */}
 
                         {/* Hành động */}
-                        {user && user.roles && !user.roles.includes("ROLE_STUDENT") && <div className={cx("actions")}>
+                        {userRole.includes("ROLE_ADMIN") && <div className={cx("actions")}>
                             <button onClick={() => handleEditCourse(course)} className={cx("edit-button")}>
                                 Sửa
                             </button>
@@ -382,7 +386,7 @@ function CourseDocument() {
                         </div> */}
 
                         {/* Hành động */}
-                        {user && user.roles && !user.roles.includes("ROLE_STUDENT") && <div className={cx("actions")}>
+                        {userRole.includes("ROLE_ADMIN") && <div className={cx("actions")}>
                             <button onClick={() => handleEditCourse(course)} className={cx("edit-button")}>
                                 Sửa
                             </button>
@@ -419,7 +423,7 @@ function CourseDocument() {
                         </div> */}
 
                         {/* Hành động */}
-                        {user && user.roles && !user.roles.includes("ROLE_STUDENT") && <div className={cx("actions")}>
+                        {userRole.includes("ROLE_ADMIN") && <div className={cx("actions")}>
                             <button onClick={() => handleEditCourse(course)} className={cx("edit-button")}>
                                 Sửa
                             </button>

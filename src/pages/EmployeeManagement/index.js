@@ -61,7 +61,7 @@ function EmployeeManagement() {
   const [pagination, setPagination] = useState({
     currentPage: 0,
     totalPages: 0,
-    pageSize: 5,
+    pageSize: 10,
   });
   const [showForm, setShowForm] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -316,7 +316,7 @@ function EmployeeManagement() {
           onChange: (page) => {
             fetchEmployees(page);
           },
-          pageSize: 5,
+          pageSize: 3,
         }}
       >
         <Column
