@@ -61,7 +61,7 @@ function EmployeeManagement() {
   const [pagination, setPagination] = useState({
     currentPage: 0,
     totalPages: 0,
-    pageSize: 10,
+    pageSize: 3,
   });
   const [showForm, setShowForm] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -89,6 +89,7 @@ function EmployeeManagement() {
 
   // Fetch danh sách nhân viên
   const fetchEmployees = async (page) => {
+    console.log(page);
     try {
       const token = localStorage.getItem("auth_token");
       const response = await fetch(
@@ -314,9 +315,12 @@ function EmployeeManagement() {
           position: "bottom",
           align: "center",
           onChange: (page) => {
-            fetchEmployees(page);
+            fetchEmployees(page-1);
           },
           pageSize: 3,
+          total: pagination.totalPages * pagination.pageSize,
+         
+          
         }}
       >
         <Column

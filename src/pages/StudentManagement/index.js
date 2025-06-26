@@ -18,7 +18,7 @@ function StudentManagement() {
     const [pagination, setPagination] = useState({
         totalPages: 0,
         currentPage: 0,
-        pageSize: 100,
+        pageSize: 8,
     });
 
     const [showForm, setShowForm] = useState(false);
@@ -78,9 +78,9 @@ function StudentManagement() {
                 const birthDate = new Date(value);
                 const today = new Date();
                 const age = today.getFullYear() - birthDate.getFullYear();
-                if (false) {
-                    return 'Tuổi phải từ 16 đến 100';
-                }
+                // if (false) {
+                //     return 'Tuổi phải từ 16 đến 100';
+                // }
                 return '';
 
             case 'queQuan':
@@ -306,7 +306,8 @@ function StudentManagement() {
                   return;
                 }
                 else{
-                    toast.error("Lỗi khi lưu sinh viên: " + response.statusText);
+                    toast.error("Lỗi hệ thống ");
+                    console.log(response);
                     return;
                 }
             }
@@ -449,11 +450,7 @@ function StudentManagement() {
                             <li><strong>Tên:</strong> {selectedStudent.tenSinhVien}</li>
                             <li><strong>Giới tính:</strong> {selectedStudent.gioiTinh}</li>
                             <li><strong>Ngày sinh:</strong> {selectedStudent.ngaySinh}</li>
-                            <li><strong>Email:</strong> {selectedStudent.email}</li>
-                            <li><strong>Số điện thoại:</strong> {selectedStudent.dienThoai}</li>
                             <li><strong>Quê quán:</strong> {selectedStudent.queQuan}</li>
-                            <li><strong>Địa chỉ hiện tại:</strong> {selectedStudent.diaChiHienTai}</li>
-                            <li><strong>CCCD:</strong> {selectedStudent.cccd}</li>
                             <li><strong>Khoa:</strong> {selectedStudent.khoa}</li>
                             <li><strong>Lớp:</strong> {selectedStudent.tenLop}</li>
                         </ul>
