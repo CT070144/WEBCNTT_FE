@@ -142,7 +142,7 @@ const Profile = () => {
             </div>
 
             <div className={cx("content")}>
-                <Divider orientation="left">Thông tin cá nhân</Divider>
+                <Divider orientation="left"></Divider>
             </div>
 
 

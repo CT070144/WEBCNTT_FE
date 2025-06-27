@@ -57,6 +57,7 @@ const schema = yup.object().shape({
 function EmployeeManagement() {
   const [employees, setEmployees] = useState([]);
   const [subjects, setSubjects] = useState([]);
+  const [departments, setDepartments] = useState([]);
   const token = localStorage.getItem("auth_token");
   const [pagination, setPagination] = useState({
     currentPage: 0,
@@ -129,9 +130,27 @@ function EmployeeManagement() {
     }
   };
 
+  const fetchDepartments = async () => {
+    try {
+      const response = await fetch(url + "/api/phong_ban", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setDepartments(data.content || []);
+      } else {
+        console.error("Failed to fetch departments");
+        toast.error("Lỗi khi lấy danh sách phòng ban!");
+      }
+    } catch (error) {
+      toast.error("Lỗi khi lấy danh sách phòng ban!");
+    }
+  };
+
   useEffect(() => {
     fetchEmployees(0);
     fetchSubjects();
+    fetchDepartments();
   }, []);
 
   // Xóa nhân viên
@@ -477,15 +496,11 @@ function EmployeeManagement() {
                   control={control}
                   render={({ field }) => (
                     <Select {...field} placeholder="Chọn phòng ban">
-                      <Select.Option value="CNTT">
-                        Công nghệ thông tin
-                      </Select.Option>
-                      <Select.Option value="ATTT">
-                        An toàn thông tin
-                      </Select.Option>
-                      <Select.Option value="DTVT">
-                        Điện tử viễn thông
-                      </Select.Option>
+                      {departments.map((department) => (
+                        <Select.Option key={department.maPhongBan} value={department.maPhongBan} label={department.tenPhongBan}>
+                          {department.tenPhongBan}
+                        </Select.Option>
+                      ))}
                     </Select>
                   )}
                 />

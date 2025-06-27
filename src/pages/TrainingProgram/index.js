@@ -57,7 +57,7 @@ const TrainingProgram = () => {
 
       <div className={cx("content")}>
         {mockTrainingPrograms.length === 0 ? (
-          <div className={cx("no-data")}>
+          <div className={cx("no-data")}> 
             <p>Không có chương trình đào tạo nào</p>
           </div>
         ) : (
