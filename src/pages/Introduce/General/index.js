@@ -5,10 +5,15 @@ const General = () => {
   return (
     <div className={styles.generalWrapper}>
       <div className={styles.headerRow}>
-        <span className={styles.time}>Cập nhật: 26/06/2025 |</span>
+        <span className={styles.time}>Cập nhật: 27/06/2025 |</span>
         <span className={styles.contact}>LIÊN HỆ</span>
       </div>
-      <h2 className={styles.title}>HỌC VIỆN KỸ THUẬT MẬT MÃ (ACTVN)</h2>
+      <div className={styles.titleContainer}>
+        <div className={styles.titleOverlay}>
+      <h2 className={styles.title}>HỌC VIỆN KỸ THUẬT MẬT MÃ</h2>
+      
+        </div>
+      </div>
       <img src="https://actvn.edu.vn/Images/Uploadimages/Logo%20HV/0010.jpg" alt="logo" className={styles.logo} />
 
       {/* Tóm tắt */}

@@ -6,7 +6,7 @@ import { AuthContext } from "~/Authentication/AuthContext";
 import { Divider, List, Button } from "antd";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-
+import { SearchOutlined } from "@ant-design/icons";
 
 function Posts() {
     const url = process.env.REACT_APP_API_URL; // URL API của bạn
@@ -33,6 +33,9 @@ function Posts() {
     const token = localStorage.getItem("auth_token")
 
     const [posts, setPosts] = useState([]);
+    const [filteredPosts, setFilteredPosts] = useState([]); // Bài viết sau khi filter
+    const [searchTerm, setSearchTerm] = useState(""); // Từ khóa tìm kiếm
+    const [isSearching, setIsSearching] = useState(false); // Trạng thái đang tìm kiếm
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -45,7 +48,62 @@ function Posts() {
 
     const size = 10;
 
-    console.log(posts)
+    // Hàm tìm kiếm bài viết
+    const handleSearch = async () => {
+        if (!searchTerm.trim()) {
+            // Nếu không có từ khóa tìm kiếm, hiển thị bài viết từ trang hiện tại
+            setFilteredPosts(posts);
+            setIsSearching(false);
+            setLoading(false);
+            return;
+        }
+
+        setIsSearching(true);
+        setLoading(true);
+
+        try {
+        
+
+            // Gửi request đến API tìm kiếm
+            const response = await fetch(`${url}/api/public/searchPost?title=${searchTerm}&content=${searchTerm}&authorName=${searchTerm}`, {
+                method: "GET"
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setFilteredPosts(data);
+                console.log("Kết quả tìm kiếm:", data);
+            } else if (response.status === 400) {
+                // Bad request - không tìm thấy kết quả
+                setFilteredPosts([]);
+                console.log("Không tìm thấy kết quả cho:", searchTerm);
+            } else {
+                // Lỗi khác
+                console.error("Lỗi tìm kiếm:", response.status);
+                setFilteredPosts([]);
+            }
+        } catch (error) {
+            console.error("Error searching posts:", error);
+            setFilteredPosts([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Xử lý khi nhấn Enter trong ô tìm kiếm
+    const handleSearchKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            handleSearch();
+        }
+    };
+
+    // Xử lý khi xóa từ khóa tìm kiếm
+    const handleSearchClear = () => {
+        setSearchTerm("");
+        setFilteredPosts(posts);
+        setIsSearching(false);
+        setLoading(false);
+    };
 
     const fetchMyPosts = async (page) => {
         try {
@@ -78,6 +136,12 @@ function Posts() {
 
     const fetchPosts = async (currentPage) => {
         setLoading(true);
+        // Reset search state khi fetch posts mới
+        if (currentPage === 0) {
+            setSearchTerm("");
+            setIsSearching(false);
+        }
+        
         try {
             const response = await fetch(`${url}/api/public/posts?page=${currentPage}&size=${size}`);
             if (!response.ok) {
@@ -88,6 +152,9 @@ function Posts() {
             console.log(data)
             setPosts(data.content);
             setTotalPages(data.totalPages);
+            
+            // Cập nhật filteredPosts với dữ liệu từ trang hiện tại
+            setFilteredPosts(data.content);
         } catch (error) {
             console.error("Error fetching posts:", error);
         } finally {
@@ -286,6 +353,9 @@ function Posts() {
 
     const handlePageClick = (pageNumber) => {
         setPage(pageNumber);
+        // Reset search khi chuyển trang
+        setSearchTerm("");
+        setIsSearching(false);
         fetchPosts(pageNumber);
     };
 
@@ -313,20 +383,56 @@ function Posts() {
     return (
         <div className={cx("container")}>
             <div className={cx("posts-list")}>
-                <Divider orientation="left"><h1>Tất cả bài viết</h1></Divider>
-                {posts.length > 0 ? (
-                    posts.map((post) => (
+                <Divider orientation="left">
+                    <h1>Tất cả bài viết</h1>
+                </Divider>
+                <div className={cx("filter-container")}>
+                   <div className={cx("filter-item")}>
+                    <label htmlFor="search">Tìm kiếm bài viết</label>
+                    <div className={cx("search-wrapper")}>
+                        <input
+                            type="text"
+                            placeholder="Tìm kiếm bài viết"
+                            className={cx("search-input")}
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onKeyDown={handleSearchKeyPress}
+                        />
+                        <button className={cx("search-button")} onClick={handleSearch}>
+                            <SearchOutlined className={cx("search-icon")} />
+                        </button>
+                        {searchTerm && (
+                            <button className={cx("clear-search-button")} onClick={handleSearchClear}>
+                                ✕
+                            </button>
+                        )}
+                    </div>
+                    {isSearching && (
+                        <div className={cx("search-info")}>
+                            {loading ? "Đang tìm kiếm..." : 
+                             filteredPosts.length > 0 ? 
+                             `Tìm thấy ${filteredPosts.length} kết quả cho "${searchTerm}"` :
+                             `Không tìm thấy kết quả nào cho "${searchTerm}"`
+                            }
+                        </div>
+                    )}
+                   </div>
+                  
+                    
+                </div>
+                {filteredPosts.length > 0 ? (
+                    filteredPosts.map((post) => (
                         <div key={post.postId} className={cx("post-item")}>
                             <div className={cx("post-image")}>
                              
-                            <img src={post.file_dto[0] ? (url + post.file_dto[0].downloadUrl) : "https://actvn.edu.vn/News/GetImage/28237"} alt="" ></img>
+                            <img src={post.file_dto && post.file_dto[0] ? (url + post.file_dto[0].downloadUrl) : "https://actvn.edu.vn/News/GetImage/28237"} alt="" ></img>
                             </div>
                             <div className={cx("post-content")}>
-                                <Link to={`/posts/${post.postId}`} className={cx("post-title")}>{post.title}</Link>
+                                <Link to={`/posts/${post.postId}`} className={cx("post-title")}>{post.title || "Không có tiêu đề"}</Link>
                                 <p className={cx("post-meta")}>
-                                    Tác giả: {post.authorName} | Ngày tạo: {post.createAt}
+                                    Tác giả: {post.authorName || "Không xác định"} | Ngày tạo: {post.createAt || "Không xác định"}
                                 </p>
-                                <p className={cx("post-excerpt")} dangerouslySetInnerHTML={{ __html: post.content }}>
+                                <p className={cx("post-excerpt")} dangerouslySetInnerHTML={{ __html: post.content || "Không có nội dung" }}>
                                 </p>
                                 <div className={cx("actions")}>
                                     <a href={`/posts/${post.postId}`} className={cx("read-more")}>
@@ -351,20 +457,30 @@ function Posts() {
                         </div>
                     ))
                 ) : (
-                    <p>Không có bài viết nào để hiển thị.</p>
+                    <p className={cx("no-results")}>
+                        {searchTerm && isSearching && !loading ? 
+                         `Không tìm thấy bài viết nào cho "${searchTerm}"` : 
+                         searchTerm && loading ? 
+                         "Đang tìm kiếm..." :
+                         "Không có bài viết nào để hiển thị."
+                        }
+                    </p>
                 )}
 
-                <div className={cx("pagination")}>
-                    {Array.from({ length: totalPages }, (_, index) => (
-                        <button
-                            key={index}
-                            className={cx("page-button", { active: page === index })}
-                            onClick={() => handlePageClick(index)}
-                        >
-                            {index + 1}
-                        </button>
-                    ))}
-                </div>
+                {/* Chỉ hiển thị phân trang khi không đang tìm kiếm */}
+                {!isSearching && (
+                    <div className={cx("pagination")}>
+                        {Array.from({ length: totalPages }, (_, index) => (
+                            <button
+                                key={index}
+                                className={cx("page-button", { active: page === index })}
+                                onClick={() => handlePageClick(index)}
+                            >
+                                {index + 1}
+                            </button>
+                        ))}
+                    </div>
+                )}
             </div>
 
             {loading && <p className={cx("loading")}>Đang tải...</p>}
@@ -459,7 +575,7 @@ function Posts() {
                     <div className={cx("modal-content")}>
                         <p>
                             Bạn có chắc chắn muốn xóa bài viết{" "}
-                            <strong>{postToDelete?.title}</strong> không?
+                            <strong>{postToDelete?.title || "Không có tiêu đề"}</strong> không?
                         </p>
                         <div className={cx("modal-actions")}>
                             <button className={cx("confirm-button")} onClick={deletePost}>
@@ -476,11 +592,13 @@ function Posts() {
             <div className={cx("my-post")}>
                 <Divider orientation="left"><h3>Bài viết mới nhất</h3></Divider>
                 <List
+            
                     className={cx("my-post-list")}
                     bordered
                     pagination={{
                         position: "bottom",
                         align: "center",
+                        
                         onChange: (page) => {
                             fetchMyPosts(page - 1);
                         },
@@ -489,8 +607,8 @@ function Posts() {
                     dataSource={myPosts}
                     renderItem={(item) => (
                         <List.Item>
-                            <img src={item.file_dto[0] ? (url + item.file_dto[0].downloadUrl) : "https://actvn.edu.vn/News/GetImage/28237"} alt="" className={cx("my-post-image")}></img>
-                            <Link to={`/posts/${item.postId}`}>{item.title}</Link>
+                            <img src={item.file_dto && item.file_dto[0] ? (url + item.file_dto[0].downloadUrl) : "https://actvn.edu.vn/News/GetImage/28237"} alt="" className={cx("my-post-image")}></img>
+                            <Link to={`/posts/${item.postId}`}>{item.title || "Không có tiêu đề"}</Link>
                         </List.Item>
                     )}>
 

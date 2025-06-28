@@ -51,9 +51,9 @@ function Header() {
           <h4>Học viện Kỹ thuật Mật Mã</h4>
         </div>
       </Link>
-      {/* SEARCH BAR */}
-      <div className={cx("search-bar")}>
-        <input placeholder="Nhập để tìm kiếm"></input>
+      
+      <div className={cx("login-bar")}>  
+        <Link to="/login">Đăng nhập</Link>
       </div>
 
 

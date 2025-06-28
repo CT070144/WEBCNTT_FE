@@ -94,12 +94,6 @@ function UserLayout({ children }) {
                     label: (
                         <Link to={"/createPost"}>Tạo bài viết</Link>
                     )
-                },
-                {
-                    key: 'createLayout',
-                    label: (
-                        <Link to={"/createLayout/user"}>Tạo Layout</Link>
-                    )
                 }
             ]
         },
@@ -160,19 +154,7 @@ function UserLayout({ children }) {
                 }
             ]
         },
-        {
-            key: 'infoMana',
-            label: 'Quản lý thông tin',
-            icon: <InfoCircleOutlined></InfoCircleOutlined>,
-            children: [
-                {
-                    key: 'createCv',
-                    label: (
-                        <Link to={"/createLayout/user"}>Tạo thông tin nhân viên</Link>
-                    )
-                }
-            ]
-        },
+        
         {
             key: 'crudnav',
             label: (
@@ -227,10 +209,7 @@ function UserLayout({ children }) {
                         </div>
                     </Link>
 
-                    <div className={cx("search-box")}>
-                        <button className={cx("btn-search")}><i class="fas fa-search"></i></button>
-                        <input type="text" className={cx("input-search")} placeholder="Type to Search..." />
-                    </div>
+                  
 
 
                     {!user && (

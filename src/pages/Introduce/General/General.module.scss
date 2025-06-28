@@ -1,10 +1,11 @@
 .generalWrapper {
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 36px 18px 0 18px;
-  background: #fff;
+  background: transparent ;
   border-radius: 14px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+  border: 1px solid #e0e0e0;
   text-align: left;
   font-family: 'Segoe UI', Arial, sans-serif;
   color: #222;
@@ -57,9 +58,33 @@
   font-weight: 600;
   text-align: center;
 }
-
+.titleContainer{
+  background-image: url('https://scontent.fhan2-5.fna.fbcdn.net/v/t39.30808-6/483807005_1045932847563243_8766811744882039996_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=86c6b0&_nc_ohc=y-ls7lBM-14Q7kNvwGzA0nL&_nc_oc=Adm9-jmN-wsuLqk5rbMyaCm8l1Fhffau9JfXeUxZfy0nLCidfjCurjMBJV2qhocJjbw&_nc_zt=23&_nc_ht=scontent.fhan2-5.fna&_nc_gid=dECI0-kMpf4G1xoquR6jdQ&oh=00_AfOqzHlFMFyqV2UMvimG28L8_7VbvyDZGYR-R8A27ZIHvw&oe=68641F15');
+  background-size: cover;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  height: 365px;
+  .titleOverlay{
+    position: absolute;
+    top: 20px;
+    left: 50px;
+   
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+  h2{
+    z-index: 1000;
+    color: white;
+    font-size: 3rem;
+    font-weight: 800;
+    
+    padding: 0;
+    text-align: center;
+  }
+}
 .summary {
-  background: #fff5f5;
   border-radius: 10px;
   padding: 18px 24px;
   margin-bottom: 18px;

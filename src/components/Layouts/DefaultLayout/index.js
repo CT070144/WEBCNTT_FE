@@ -211,10 +211,9 @@ function DefaultLayout({ children }) {
             </Link>
 
 
-            <div className={cx("search-box")}>
-              <button className={cx("btn-search")}><i class="fas fa-search"></i></button>
-              <input type="text" className={cx("input-search")} placeholder="Type to search..." />
-            </div>
+          <div className={cx("login-button")}>
+            <Link className={cx("login-button-link")} to="/login">Đăng nhập</Link>
+          </div>
 
 
 
