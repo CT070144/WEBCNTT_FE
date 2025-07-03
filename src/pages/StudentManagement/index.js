@@ -225,9 +225,13 @@ function StudentManagement() {
         }
         if (nameValue) {
             filtered = filtered.filter((user) =>
-                user.tenSinhVien.toLowerCase().includes(nameValue.toLowerCase())
+                user.tenSinhVien.toLowerCase().includes(nameValue.toLowerCase())||
+                user.maSinhVien.toLowerCase().includes(nameValue.toLowerCase())
             );
+
+
         }
+        
         setFilteredUsers(filtered);
     };
 

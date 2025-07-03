@@ -59,13 +59,15 @@ function AutoSlide() {
                                     </button>
                                 </div>
                             </div>
+                          
 
 
                         </div>
                     </div>
                 ))}
             </Slider>
-            <div className={cx("border")}></div>
+            <div className={cx("border-bottom")}></div>
+           
         </div>
     );
 }

@@ -74,7 +74,7 @@ function UserLayout({ children }) {
         {
             key: 'home',
             label: (
-                <Link to={(user == null) ? '/' : `/${route}`}>Trang chủ</Link>
+                <Link to={"/"}>Trang chủ</Link>
             ),
             icon: <HomeFilled />
         },
@@ -86,7 +86,7 @@ function UserLayout({ children }) {
                 {
                     key: 'CRUDpost',
                     label: (
-                        <Link to={"/posts"}>Các bài viết</Link>
+                        <Link to={"/posts/admin"}>Các bài viết</Link>
                     )
                 },
                 {

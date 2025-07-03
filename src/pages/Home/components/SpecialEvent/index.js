@@ -6,7 +6,7 @@ import { CalendarFilled } from "@ant-design/icons";
 import { Button } from "antd";
 import { useAuth } from "~/Authentication/AuthContext";
 
-function SpecialEvent() {
+function SpecialEvent({titleHidden = false, buttonHidden = false}) {
     const navigate = useNavigate();
     const cx = classNames.bind(styles);
     const url = process.env.REACT_APP_API_URL;
@@ -77,7 +77,7 @@ function SpecialEvent() {
 
     return (
         <div className={cx('container')}>
-            <h1>SỰ KIỆN MỚI NHẤT</h1>
+            {!titleHidden && <h1>SỰ KIỆN MỚI NHẤT</h1>}
 
             <div className={cx("list-detail")}>
                 <div className={cx("event-cel")}>
@@ -95,7 +95,7 @@ function SpecialEvent() {
                                 <div><i className="fa-solid fa-location-dot"></i> {currentEvent.location}</div>
                             </div>
                             <div className={cx("info-actions")}>
-                             
+
                                 <Button className={cx("register")} onClick={() => navigate(`/events/${currentEvent.eventId}`)}>Chi tiết</Button>
                             </div>
                         </div>
@@ -127,11 +127,18 @@ function SpecialEvent() {
             </div>
 
             {/* Thêm Link dẫn đến trang xem toàn bộ bài viết */}
-            <div className={cx('view-all')}>
-                <Link to="/events" className={cx('view-all-link')}>
-                    Xem tất cả sự kiện
-                </Link>
-            </div>
+           
+                <div className={cx('view-all')}>
+                    {!buttonHidden && (
+                        <Link to="/events" className={cx('view-all-link')}>
+                            Xem tất cả sự kiện
+                        </Link>
+                    )}
+                    {buttonHidden && (
+                       <a href="#all-events" className={cx('view-all-link')}>Xem tất cả sự kiện</a>
+                    )}
+                </div>
+            
         </div>
     );
 }

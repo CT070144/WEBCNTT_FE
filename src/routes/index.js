@@ -24,6 +24,8 @@ import PendingDiscussions from "~/pages/Forum/components/PendingDiscussion";
 import TrainingProgram from "~/pages/TrainingProgram";
 import ProgramDetail from "~/pages/TrainingProgram/ProgramDetail";
 import General from "~/pages/Introduce/General";
+import PostsAdmin from "~/pages/Posts/PostsAdmin";
+import EventAdmin from "~/pages/Events/EventAdmin";
 
 const allowAll = ['ROLE_ADMIN', 'ROLE_EMPLOYEE', 'ROLE_STUDENT'];
 const allowStaff = ['ROLE_ADMIN', 'ROLE_EMPLOYEE'];
@@ -48,21 +50,22 @@ const publicRoutes = [
 const privateRoutes = [
     { path: '/admin', component: Home, allowedRole: ['ROLE_ADMIN'] },
     { path: '/createPost', component: CreatePost, allowedRole: ['ROLE_ADMIN', 'ROLE_EMPLOYEE'] },
-    { path: '/posts/admin', component: Posts, allowedRole: ['ROLE_ADMIN'] },
+   
     { path: '/student', component: Home, allowedRole: ['ROLE_STUDENT'], layout: DefaultLayout },
     { path: '/employee', component: Home, allowedRole: ['ROLE_EMPLOYEE'] },
-    { path: '/studentmanagement', component: StudentManagement, allowedRole: ['ROLE_ADMIN', 'ROLE_EMPLOYEE','ROLE_STUDENT'] },
+    { path: '/studentmanagement', component: StudentManagement, allowedRole: ['ROLE_ADMIN', 'ROLE_EMPLOYEE'] },
     { path: '/employeemanagement', component: EmployeeManagement, allowedRole: ['ROLE_ADMIN'] },
-    { path: '/coursedocument', component: CourseDocument, allowedRole: ['ROLE_ADMIN','ROLE_EMPLOYEE'] },
+    { path: '/coursedocument', component: CourseDocument, allowedRole: ['ROLE_ADMIN','ROLE_EMPLOYEE','ROLE_STUDENT'] },
     { path: '/kmaforum', component: Forum, allowedRole: ['ROLE_ADMIN', 'ROLE_EMPLOYEE', 'ROLE_STUDENT'] },
     { path: '/profile', component: Profile, allowedRole: allowAll },
-    { path: '/events/user', component: Events, allowedRole: allowAll },
-    { path: '/createEvent/user', component: CreateEvent, allowedRole: allowStaff },
+    { path: '/events/user', component: EventAdmin, allowedRole: allowAll },
+    { path: '/createEvent/user', component: CreateEvent, allowedRole: ['ROLE_ADMIN'] },
     { path: '/createLayout/user', component: CreateLayout, allowedRole: allowStaff },
     { path: '/crud-navbar', component: CRUDNavbar, allowedRole: ['ROLE_ADMIN'] },
     { path: '/create-layout-for-menuitem/:slug', component: AddLMI, allowedRole: allowStaff },
     { path: '/createDiscussion', component: CreateDiscussion, allowedRole: allowAll },
-    { path: '/pending', component: PendingDiscussions, allowedRole: allowStaff }
+    { path: '/pending', component: PendingDiscussions, allowedRole:['ROLE_ADMIN'] },
+    { path: '/posts/admin', component: PostsAdmin, allowedRole: ['ROLE_ADMIN','ROLE_EMPLOYEE','ROLE_STUDENT'] }
 ]
 
 export { publicRoutes, privateRoutes }

@@ -8,3 +8,5 @@
 - sửa page xem chi tiết nhân viên : IntroduceDetail.js
 - Thêm chức năng thêm nhân viên & xoá nhân viên
 - Thêm chức năng thêm,sửa môn học & xoá môn học
+bug từ chối
+người tạo bài viết thì được fix

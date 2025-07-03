@@ -3,11 +3,11 @@ import classNames from "classnames/bind";
 import Layout, { Content } from "antd/es/layout/layout";
 import { Header } from "antd/es/layout/layout";
 import { Button, ConfigProvider, Dropdown, Menu } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "~/Authentication/AuthContext";
 import { useEffect, useState } from 'react';
 import { keyboard } from '@testing-library/user-event/dist/keyboard';
-import { DownOutlined } from '@ant-design/icons';
+import { DownOutlined, RightOutlined } from '@ant-design/icons';
 import Footer from '~/pages/Home/components/Footer';
 
 const cx = classNames.bind(styles)
@@ -56,7 +56,8 @@ function DefaultLayout({ children }) {
   const url = api;
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-
+  const location = useLocation();
+  const currentPath = location.pathname;
   const fetchNavItem = async () => {
     try {
       const response = await fetch(url + "/api/public/menu_items", {
@@ -124,7 +125,7 @@ function DefaultLayout({ children }) {
     {
       key: 'home',
       label: (
-        <Link to={(user == null) ? '/' : `/${route}`}>Trang chủ</Link>
+        <Link to={"/"}>Trang chủ</Link>
       )
     },
     {
@@ -142,7 +143,7 @@ function DefaultLayout({ children }) {
         {
           key: 'staff-list',
           label: (
-            <Link to={"/introEmployee"}>Danh sách cán bộ</Link>
+            <Link to={"/introEmployee"}>Danh sách cán bộ </Link>
           )
         }
       ]
@@ -180,9 +181,12 @@ function DefaultLayout({ children }) {
         Menu: {
           /* here is your component tokens */
           itemColor: "white",
-          itemHoverBg: "rgba(43, 116, 181, 0.69)",
-          popupBg: "#282828",
-          itemHoverColor: "white"
+          itemHoverBg: "rgba(255, 255, 255, 0.1)",
+          popupBg: "#920000",
+          itemHoverColor: "white",
+          subMenuItemBg: "#920000",
+          itemSelectedBg: "rgba(255, 255, 255, 0.2)",
+          itemSelectedColor: "white"
         },
       },
     }}>
@@ -191,7 +195,7 @@ function DefaultLayout({ children }) {
           style={{
             position: 'sticky',
             top: 0,
-            zIndex: 1,
+            zIndex: 99,
             width: '100%',
             display: 'flex',
             alignItems: 'center',
@@ -211,9 +215,12 @@ function DefaultLayout({ children }) {
             </Link>
 
 
-          <div className={cx("login-button")}>
-            <Link className={cx("login-button-link")} to="/login">Đăng nhập</Link>
-          </div>
+          
+            <div className={cx("login-button")}>
+             {user == null && <Link className={cx("login-button-link")} to="/login">Đăng nhập</Link>}
+             {user != null && <Link className={cx("login-button-link")} onClick={() => handleLogout()}>Đăng xuất</Link>}
+            </div>
+          
 
 
 
@@ -236,8 +243,9 @@ function DefaultLayout({ children }) {
         </Header>
 
         <Content className={cx("content")}>
-          <div style={{ background: "#282828" }} className={cx("navbar", { fixed: isFixed })}>
+          <div style={{ background: "#bc2626" }} className={cx("navbar", { fixed: isFixed })}>
             <Menu
+              selectedKeys={[currentPath]}
               mode="horizontal"
               className={cx("nav-menu")}
               items={items.map((item) => ({
@@ -251,7 +259,7 @@ function DefaultLayout({ children }) {
               }))}
               style={{
                 minWidth: 0,
-                background: "#282828",
+                background: "#bc2626",
                 color: "red"
               }}
             >

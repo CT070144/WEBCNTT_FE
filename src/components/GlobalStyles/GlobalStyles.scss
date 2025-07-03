@@ -25,3 +25,8 @@ body {
     font-family: "Montserrat", sans-serif;
     scroll-behavior: smooth;
 }
+
+.ant-menu-horizontal > .ant-menu-item::after,
+.ant-menu-horizontal > .ant-menu-submenu::after {
+  display: none !important;
+}

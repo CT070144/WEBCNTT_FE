@@ -63,17 +63,22 @@ const PendingDiscussions = () => {
 
     // Hàm gọi API xóa bài thảo luận
     const handleReject = async (discussionId) => {
-        try {
-            const formData = new FormData();
+        console.log(discussionId);
+        const formData = new FormData();
             formData.append("discussionStatus", "REJECTED");
             formData.append("discussionId", discussionId);
+        try {
+            
 
             const response = await fetch("http://localhost:8084/api/discussions/status", {
                 method: "PATCH",
                 body: formData,
+                headers: {
+                    Authorization: `Bearer ${token}`, // Thay YOUR_ACCESS_TOKEN bằng token thực tếs
+                }
             });
 
-            if (response.ok) {
+            if (response.status === 200) {
                 message.success("Bài thảo luận đã bị từ chối.");
                 setDiscussions(discussions.filter((discussion) => discussion.discussionId !== discussionId));
             } else {

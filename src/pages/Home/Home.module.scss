@@ -2,6 +2,7 @@
     width: 100%;
    
     .fake-tuyen {
+       
 
         padding-bottom: 50px;
         width: 100%;
@@ -43,9 +44,23 @@
             align-items: center;
             justify-content: space-around;
             height: 60%;
-            margin: 0 25px;
+          
             
         
         }
     }
 }
+
+.card {
+    animation: fadeInUp 1s ease-out;
+}
+@keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }

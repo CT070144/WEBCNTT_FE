@@ -7,13 +7,17 @@ import { Divider, List, Button } from "antd";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { SearchOutlined } from "@ant-design/icons";
+import SpecialPost from "../Home/components/SpecialPost";
 
-function Posts() {
+function Posts({isAdmin = false}) {
     const url = process.env.REACT_APP_API_URL; // URL API của bạn
     const cx = classNames.bind(styles);
     const editorRef = useRef(null);
     const { user } = useContext(AuthContext);
-
+    const userString = localStorage.getItem('user');
+    const userOwner = JSON.parse(userString);
+    
+   
     const modules = {
         toolbar: [
             [{ 'align': [] }],
@@ -106,8 +110,9 @@ function Posts() {
     };
 
     const fetchMyPosts = async (page) => {
+        
         try {
-            const response = await fetch(`${url}/api/public/posts?page=${page}`, {
+            const response = await fetch(`${url}/api/public/posts?page=${page}&size=${5}`, {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`
@@ -220,6 +225,7 @@ function Posts() {
 
 
     const openUpdateModal = async (post) => {
+      
         const response = await fetch(`${url}/api/public/posts/${post.postId}`, {
             method: "GET",
         });
@@ -379,9 +385,12 @@ function Posts() {
         }
         return "https://cdn-icons-png.flaticon.com/512/2246/2246713.png"; // Icon mặc định
     };
-
+    
     return (
+        <div className={cx("posts-container")}>
+        {!isAdmin && <SpecialPost title ="BÀI VIẾT MỚI NHẤT"></SpecialPost>}
         <div className={cx("container")}>
+            
             <div className={cx("posts-list")}>
                 <Divider orientation="left">
                     <h1>Tất cả bài viết</h1>
@@ -438,20 +447,25 @@ function Posts() {
                                     <a href={`/posts/${post.postId}`} className={cx("read-more")}>
                                         Xem chi tiết
                                     </a>
-                                    {!(user?.roles.includes("ROLE_STUDENT") || user == null) && <div className={cx("UD-buttons")}>
-                                        <Button
-                                            className={cx("update-button")}
-                                            onClick={() => openUpdateModal(post)}
-                                        >
-                                            Chỉnh sửa
-                                        </Button>
-                                        <button
-                                            className={cx("delete-button")}
-                                            onClick={() => openDeleteModal(post)}
-                                        >
-                                            Xóa
-                                        </button>
-                                    </div>}
+                                    {user && (
+                                        (user.roles.includes("ROLE_ADMIN") ||
+                                        (user.roles.includes("ROLE_EMPLOYEE") && post.authorName === userOwner.fullName)) && (
+                                            <div className={cx("UD-buttons")}>
+                                                <Button
+                                                    className={cx("update-button")}
+                                                    onClick={() => openUpdateModal(post)}
+                                                >
+                                                    Chỉnh sửa
+                                                </Button>
+                                                <button
+                                                    className={cx("delete-button")}
+                                                    onClick={() => openDeleteModal(post)}
+                                                >
+                                                    Xóa
+                                                </button>
+                                            </div>
+                                        )
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -589,21 +603,12 @@ function Posts() {
                 </div>
             )}
 
-            <div className={cx("my-post")}>
+           {!isAdmin &&     <div className={cx("my-post")}>
                 <Divider orientation="left"><h3>Bài viết mới nhất</h3></Divider>
                 <List
             
                     className={cx("my-post-list")}
                     bordered
-                    pagination={{
-                        position: "bottom",
-                        align: "center",
-                        
-                        onChange: (page) => {
-                            fetchMyPosts(page - 1);
-                        },
-                        pageSize: 10,
-                    }}
                     dataSource={myPosts}
                     renderItem={(item) => (
                         <List.Item>
@@ -613,7 +618,9 @@ function Posts() {
                     )}>
 
                 </List>
-            </div>
+            </div>}
+           
+        </div>
         </div>
     );
 }

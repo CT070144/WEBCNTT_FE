@@ -1,18 +1,34 @@
+.posts-container{
+    display: flex;
+    flex-direction: column;
+}
 .container {
     margin-left: 50px;
     font-family: Arial, sans-serif;
     display: flex;
+    flex-direction: row;
+    
 
     .my-post {
-        width: 20%;
+        width: 2000px;
+        margin-right: 50px;
         height: fit-content;
         margin-left: 50px;
         margin-top: 40px;
+        
     }
 }
 .my-post-list{
+    padding-bottom: 20px;
     a{
         line-height: 25px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3; /* Số dòng muốn hiển thị, ví dụ 2 dòng */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: normal;
+        word-break: break-word;
 
     }
 
@@ -26,7 +42,8 @@
 }
 
 .posts-list {
-    width: 70%;
+    min-width: 70%;
+    max-width: 100%;
     margin-top: 20px;
     display: flex;
     flex-direction: column;
@@ -77,6 +94,14 @@
         text-decoration: underline;
         cursor: pointer;
     }
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Số dòng muốn hiển thị, ví dụ 2 dòng */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    word-break: break-word;
+    line-height: 30px;
 }
 
 .post-meta {

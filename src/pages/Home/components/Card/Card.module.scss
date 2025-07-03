@@ -9,6 +9,8 @@
   margin: 16px 0;
   transition: box-shadow 0.1s;
   width: 40%;
+  animation: fadeInUp 1s ease-out;
+  
   
 
   &:hover {
@@ -76,5 +78,15 @@
   }
   .cardContent {
     padding: 18px 12px;
+  }
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

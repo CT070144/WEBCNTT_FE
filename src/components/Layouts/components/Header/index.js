@@ -36,7 +36,7 @@ function Header() {
 
   }, [user])
 
-
+  
 
   return (
     <header className={cx("wrapper")}>
@@ -51,10 +51,7 @@ function Header() {
           <h4>Học viện Kỹ thuật Mật Mã</h4>
         </div>
       </Link>
-      
-      <div className={cx("login-bar")}>  
-        <Link to="/login">Đăng nhập</Link>
-      </div>
+     
 
 
 

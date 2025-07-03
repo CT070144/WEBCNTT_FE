@@ -9,7 +9,7 @@ import { useState, useEffect } from "react";
 import Card from "~/components/Card";
 import { Link, useNavigate } from "react-router-dom";
 
-function SpecialPost() {
+function SpecialPost({title = "TIN MỚI NHẤT"}) {
 
     const url = process.env.REACT_APP_API_URL;
 
@@ -59,7 +59,7 @@ function SpecialPost() {
 
     return (
         <div className={cx('post-special')}>
-            <h1 className={cx('title')}>TIN MỚI NHẤT</h1>
+                <h1 className={cx('title')}>{title}</h1>
             <div className={cx('posts-item')}>
                 <i className={cx("fa-solid fa-angle-left")} onClick={previous}></i>
                 <Slider ref={sliderRef} className={cx('slider')} {...setting}>

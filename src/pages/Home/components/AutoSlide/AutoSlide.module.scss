@@ -5,8 +5,15 @@
 
     .border {
         width: 100%;
-        height: 6px;
-        background-color: #9e1c1c;
+        height: 8px;
+        background-color: #9b0000;
+    }
+    .border-bottom {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 8px;
+        background-color: #9b0000;
     }
 }
 

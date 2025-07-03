@@ -2,8 +2,10 @@ import React from 'react';
 import styles from './Card.module.scss';
 
 const Card = ({ title, content, img, children }) => {
+
   return (
-    <div className={styles.card}>
+   
+      <div className={styles.card}>
       {img && (
         <div className={styles.cardImgWrapper}>
           <img src={img} alt={title} className={styles.cardImg} />
@@ -15,6 +17,7 @@ const Card = ({ title, content, img, children }) => {
         {children}
       </div>
     </div>
+    
   );
 };
 

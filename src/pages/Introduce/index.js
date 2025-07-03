@@ -3,6 +3,7 @@ import classNames from "classnames/bind";
 import styles from "./Introduce.module.scss";
 import { Pagination } from "antd";
 import { Link } from "react-router-dom";
+import { Divider } from "antd";
 
 const cx = classNames.bind(styles);
 
@@ -38,6 +39,7 @@ function Introduce() {
 
     return (
         <div className={cx("container")}>
+            <Divider orientation="center"><h2>Danh sách cán bộ</h2></Divider>
             <div className={cx("employee-list")}>
                 {employees.map((employee) => (
                     <div key={employee.idUser} className={cx("card")}>

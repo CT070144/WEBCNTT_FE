@@ -32,7 +32,7 @@ function Home() {
             <p className={cx("description")}>Năm 2022, Tổ chức Giáo dục Quacquarelli Symonds (viết tắt QS – Vương quốc Anh) đã đánh giá và xếp chất lượng đào tạo và nghiên cứu của ĐHBK Hà Nội trong các lĩnh vực mà Trường đang đảm nhận thuộc nhóm hạng từ 401 đến 450 trên toàn Thế giới, tiếp tục giữ vị trí số 1 tại Việt Nam.</p>
             <div className={cx("tuyen-card")}>
               {cardDetail.map((item, index) => (
-                <Card key={index} title={item.title} content={item.content} img={item.image}></Card>
+                <Card className={cx("card")} key={index} title={item.title} content={item.content} img={item.image}></Card>
               ))}
           
             
