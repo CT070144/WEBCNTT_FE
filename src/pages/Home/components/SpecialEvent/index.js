@@ -95,8 +95,9 @@ function SpecialEvent({titleHidden = false, buttonHidden = false}) {
                                 <div><i className="fa-solid fa-location-dot"></i> {currentEvent.location}</div>
                             </div>
                             <div className={cx("info-actions")}>
-
+ 
                                 <Button className={cx("register")} onClick={() => navigate(`/events/${currentEvent.eventId}`)}>Chi tiết</Button>
+                                
                             </div>
                         </div>
                     </div>

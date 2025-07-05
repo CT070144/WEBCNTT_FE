@@ -4,7 +4,7 @@ import styles from "./Posts.module.scss";
 import ReactQuill from "react-quill";
 import { AuthContext } from "~/Authentication/AuthContext";
 import { Divider, List, Button } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useFetcher } from "react-router-dom";
 import { toast } from "react-toastify";
 import { SearchOutlined } from "@ant-design/icons";
 import SpecialPost from "../Home/components/SpecialPost";
@@ -49,8 +49,11 @@ function Posts({isAdmin = false}) {
     const [postToUpdate, setPostToUpdate] = useState(null);
     const [fileData, setFileData] = useState([]);
     const [myPosts, setMyPosts] = useState([]);
+    const [mySearchedPosts, setMySearchedPosts] = useState([]); // Bài viết của tôi lấy qua searchPost
+    const [loadingMyPosts, setLoadingMyPosts] = useState(false);
 
     const size = 10;
+  
 
     // Hàm tìm kiếm bài viết
     const handleSearch = async () => {
@@ -212,6 +215,7 @@ function Posts({isAdmin = false}) {
 
             toast.success("Cập nhật thành công!");
             fetchPosts(page); // Tải lại danh sách bài viết
+            fetchMySearchedPosts();
         } catch (error) {
             console.error("Error updating post:", error);
             toast.error("Cập nhật bài viết thất bại!");
@@ -316,6 +320,8 @@ function Posts({isAdmin = false}) {
 
            toast.success("Bài viết đã được xóa thành công!");
             fetchPosts(page);
+            fetchMyPosts(page);
+            fetchMySearchedPosts();
         } catch (error) {
             console.error("Error deleting post:", error);
           toast.error("Xóa bài viết thất bại!");
@@ -365,9 +371,33 @@ function Posts({isAdmin = false}) {
         fetchPosts(pageNumber);
     };
 
+    // Lấy bài viết của tôi qua searchPost
+    const fetchMySearchedPosts = async () => {
+        
+        if (!userOwner || !userOwner.fullName) return;
+        setLoadingMyPosts(true);
+        try {
+          
+          
+            const response = await fetch(`${url}/api/public/searchPost?authorName=${userOwner.fullName}`, {
+                method: 'GET'
+            });
+           
+            if (!response.ok) throw new Error('Không thể lấy bài viết của tôi');
+            const data = await response.json();
+            setMySearchedPosts(data);
+        } catch (error) {
+            
+            setMySearchedPosts([]);
+        } finally {
+            setLoadingMyPosts(false);
+        }
+    };
+
     useEffect(() => {
         fetchPosts(0);
         fetchMyPosts(0);
+        fetchMySearchedPosts();
     }, []);
 
     const getFileIcon = (contentType) => {
@@ -385,6 +415,11 @@ function Posts({isAdmin = false}) {
         }
         return "https://cdn-icons-png.flaticon.com/512/2246/2246713.png"; // Icon mặc định
     };
+
+    const handleInput = (e) => {
+        setSearchTerm(e.target.value);
+        setIsSearching(false);
+    }
     
     return (
         <div className={cx("posts-container")}>
@@ -404,8 +439,10 @@ function Posts({isAdmin = false}) {
                             placeholder="Tìm kiếm bài viết"
                             className={cx("search-input")}
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onChange={(e) => handleInput(e)}
                             onKeyDown={handleSearchKeyPress}
+                            
+                           
                         />
                         <button className={cx("search-button")} onClick={handleSearch}>
                             <SearchOutlined className={cx("search-icon")} />
@@ -496,6 +533,7 @@ function Posts({isAdmin = false}) {
                     </div>
                 )}
             </div>
+           
 
             {loading && <p className={cx("loading")}>Đang tải...</p>}
 
@@ -604,14 +642,14 @@ function Posts({isAdmin = false}) {
             )}
 
            {!isAdmin &&     <div className={cx("my-post")}>
-                <Divider orientation="left"><h3>Bài viết mới nhất</h3></Divider>
+                <Divider orientation="left"><h3>Bài viết nổi bật</h3></Divider>
                 <List
             
                     className={cx("my-post-list")}
                     bordered
                     dataSource={myPosts}
                     renderItem={(item) => (
-                        <List.Item>
+                        <List.Item className={cx("my-post-item")}>
                             <img src={item.file_dto && item.file_dto[0] ? (url + item.file_dto[0].downloadUrl) : "https://actvn.edu.vn/News/GetImage/28237"} alt="" className={cx("my-post-image")}></img>
                             <Link to={`/posts/${item.postId}`}>{item.title || "Không có tiêu đề"}</Link>
                         </List.Item>
@@ -621,6 +659,42 @@ function Posts({isAdmin = false}) {
             </div>}
            
         </div>
+       {isAdmin && (
+           <div className={cx("owner-post")}>
+           <Divider orientation="left"><h1>Bài viết của tôi</h1></Divider>
+           {loadingMyPosts ? (
+               <p className={cx("loading")}>Đang tải...</p>
+           ) : mySearchedPosts.length > 0 ? (
+               <div className={cx("my-post-list-custom")}>
+                   {mySearchedPosts.map((post) => (
+                       <div key={post.postId} className={cx("post-item", "my-post-item")}>
+                           <div className={cx("post-image")}> 
+                               <img src={post.file_dto && post.file_dto[0] ? (url + post.file_dto[0].downloadUrl) : "https://actvn.edu.vn/News/GetImage/28237"} alt=""></img>
+                           </div>
+                           <div className={cx("post-content")}> 
+                               <Link to={`/posts/${post.postId}`} className={cx("post-title")}>{post.title || "Không có tiêu đề"}</Link>
+                               <p className={cx("post-meta")}>Tác giả: {post.authorName || "Không xác định"} | Ngày tạo: {post.createAt || "Không xác định"}</p>
+                               <p className={cx("post-excerpt")} dangerouslySetInnerHTML={{ __html: post.content || "Không có nội dung" }}></p>
+                               <div className={cx("actions")}> 
+                                   <a href={`/posts/${post.postId}`} className={cx("read-more")}>Xem chi tiết</a>
+                                   {user && (
+                                       (user.roles.includes("ROLE_ADMIN") || (user.roles.includes("ROLE_EMPLOYEE") && post.authorName === userOwner.fullName)) && (
+                                           <div className={cx("UD-buttons")}> 
+                                               <Button className={cx("update-button")} onClick={() => openUpdateModal(post)}>Chỉnh sửa</Button>
+                                               <button className={cx("delete-button")} onClick={() => openDeleteModal(post)}>Xóa</button>
+                                           </div>
+                                       )
+                                   )}
+                               </div>
+                           </div>
+                       </div>
+                   ))}
+               </div>
+           ) : (
+               <p className={cx("no-results")}>Không có bài viết nào của bạn.</p>
+           )}
+       </div>
+       )}
         </div>
     );
 }

@@ -4,7 +4,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import classNames from "classnames/bind";
 import styles from "./Profile.module.scss";
 import { useAuth } from "~/Authentication/AuthContext";
-
+import { toast } from "react-toastify";
 const cx = classNames.bind(styles);
 
 const Profile = () => {
@@ -40,7 +40,7 @@ const Profile = () => {
             if (!res.ok) {
                 throw new Error("Thay đổi mật khẩu thất bại")
             }
-            alert("Thay đổi mật khẩu thành công")
+            toast.success("Thay đổi mật khẩu thành công")
             setOpen(false);
         }
         catch (err) {
@@ -132,7 +132,7 @@ const Profile = () => {
             <div className={cx("header")}>
                 <div className={cx("wallpaper")}></div>
                 <div className={cx("info")}>
-                    <img src={url + user.avaFileCode} alt=""></img>
+                    <img src={user.avaFileCode !== "/downloadProfile/" ? (url + user.avaFileCode) : "https://gist.githubusercontent.com/vinhjaxt/fa4208fd6902dd8b2f4d944fa6e7f2af/raw/454f58aeac4fdeb459476eae7128dc6ff57df25f/logo-hvktmm.png"} alt=""></img>
                     <div className={cx("username")}>
                         <h2>{user.fullName}</h2>
                         <p>{user.roles[0] === "ROLE_ADMIN" ? "Admin" : user.roles[0] === "ROLE_EMPLOYEE" ? "Nhân viên" : "Sinh viên"}</p>

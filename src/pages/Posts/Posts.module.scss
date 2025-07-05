@@ -1,6 +1,7 @@
 .posts-container{
     display: flex;
     flex-direction: column;
+    margin-bottom: 100px;
 }
 .container {
     margin-left: 50px;
@@ -20,6 +21,13 @@
 }
 .my-post-list{
     padding-bottom: 20px;
+    .my-post-item{
+        display: flex;
+        flex-direction: row;
+        justify-content: left !important;
+        gap: 10px;
+    }
+   
     a{
         line-height: 25px;
         display: -webkit-box;
@@ -34,7 +42,7 @@
 
 }
 .title {
-    text-align: center;
+    text-align: left;
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 20px;
@@ -509,12 +517,12 @@
         }
 
         .clear-search-button {
-            background-color: #dc3545;
+            background-color: var(--primary);
             color: white;
             border: none;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -542,5 +550,23 @@
     color: #666;
     margin: 40px 0;
     font-style: italic;
+}
+
+.my-post-list-custom {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.my-post-item {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  background: #fafbfc;
+  transition: box-shadow 0.2s;
+}
+
+.my-post-item:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 

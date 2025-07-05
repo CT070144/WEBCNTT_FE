@@ -7,7 +7,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "~/Authentication/AuthContext";
 import { useEffect, useState } from 'react';
 import { keyboard } from '@testing-library/user-event/dist/keyboard';
-import { DownOutlined, RightOutlined } from '@ant-design/icons';
+import { DownOutlined, RightOutlined, ArrowUpOutlined } from '@ant-design/icons';
 import Footer from '~/pages/Home/components/Footer';
 
 const cx = classNames.bind(styles)
@@ -56,6 +56,7 @@ function DefaultLayout({ children }) {
   const url = api;
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const location = useLocation();
   const currentPath = location.pathname;
   const fetchNavItem = async () => {
@@ -92,9 +93,17 @@ function DefaultLayout({ children }) {
 
       if (currentScrollY === 0) {
         setIsVisible(true);
+        setShowScrollTop(false);
       } else if (currentScrollY > lastScrollY) {
         setIsVisible(false); // lăn xuống
       } 
+
+      // Show scroll-to-top button when scrolled down more than 300px
+      if (currentScrollY > 300) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
 
       setLastScrollY(currentScrollY);
     };
@@ -105,6 +114,13 @@ function DefaultLayout({ children }) {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [lastScrollY]);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
 
   const transformApiItems = (apiItems) => {
     return apiItems.filter(item => !item.deleted).map(item => {
@@ -169,7 +185,7 @@ function DefaultLayout({ children }) {
     {
       key: 'forum',
       label: (
-        <Link to={"/kmaforum"}>Diễn đàn</Link>
+        <Link to={user && user.roles && user.roles[0] === 'ROLE_STUDENT' ? "/student/kmaforum" : "/kmaforum"}>Diễn đàn</Link>
       )
     },
     ...transformApiItems(navItem)
@@ -234,7 +250,7 @@ function DefaultLayout({ children }) {
                   }}
                   placement="bottomRight"
                 >
-                  <img className={cx("avatar")} src={user.avaFileCode != undefined ? (api + user.avaFileCode) : "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"} alt=""></img>
+                  <img className={cx("avatar")} src={user.avaFileCode !== "/downloadProfile/" ? (api + user.avaFileCode) : "https://gist.githubusercontent.com/vinhjaxt/fa4208fd6902dd8b2f4d944fa6e7f2af/raw/454f58aeac4fdeb459476eae7128dc6ff57df25f/logo-hvktmm.png"} alt=""></img>
                 </Dropdown>
 
               </div>)
@@ -269,6 +285,40 @@ function DefaultLayout({ children }) {
         </Content>
       </Layout>
       <Footer></Footer>
+      
+      {/* Scroll to top button */}
+      {showScrollTop && (
+        <Button
+          type="primary"
+          shape="circle"
+          size="large"
+          icon={<ArrowUpOutlined />}
+          onClick={scrollToTop}
+          style={{
+            position: 'fixed',
+            bottom: '30px',
+            right: '30px',
+            zIndex: 1000,
+            backgroundColor: '#bc2626',
+            borderColor: '#bc2626',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            width: '50px',
+            height: '50px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = '#920000';
+            e.target.style.transform = 'scale(1.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = '#bc2626';
+            e.target.style.transform = 'scale(1)';
+          }}
+        />
+      )}
     </ConfigProvider>
   );
 }

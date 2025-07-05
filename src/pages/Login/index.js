@@ -38,7 +38,7 @@ const Login = () => {
                 } else if (decodedToken.roles[0].includes("ROLE_EMPLOYEE")) {
                     window.location.replace("/employee");
                 } else {
-                    window.location.replace("/student");
+                    window.location.replace("/student/kmaforum");
                 }
             }, 1200);
         } catch (err) {

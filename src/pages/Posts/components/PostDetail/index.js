@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import classNames from "classnames/bind";
 import styles from "./PostDetail.module.scss";
+import { FileOutlined } from "@ant-design/icons";
 
 function PostDetail() {
     const cx = classNames.bind(styles);
@@ -106,7 +107,7 @@ function PostDetail() {
                     <h3>Files:</h3>
                     {fileData.map((file, index) => (
                         <div className={cx("file-item")} key={index} >
-                            <img src={getFileIcon(file.contentType)} alt="File Icon" />
+                            <FileOutlined className={cx("file-icon")} style={{ fontSize: "20px", color: "var(--primary)" }} />
                             <a href={file.fileUrl} target="_blank" rel="noopener noreferrer" onClick={() => handleFileClick(file.fileUrl)}>
                                 {file.filename.slice(9)}
                             </a>

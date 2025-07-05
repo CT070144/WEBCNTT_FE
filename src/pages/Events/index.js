@@ -15,6 +15,10 @@ function Events({isAdmin = false}) {
     const [filterType, setFilterType] = useState("all");
     const [selectedDate, setSelectedDate] = useState("");
     const [loading, setLoading] = useState(true);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [eventToDelete, setEventToDelete] = useState(null);
+    const [deleting, setDeleting] = useState(false);
+    const [deleteError, setDeleteError] = useState("");
 
     useEffect(() => {
         fetch(url + "/api/public/sukien?page=0", {
@@ -121,10 +125,6 @@ function Events({isAdmin = false}) {
         applyFilter(arr, filterType, selectedDate);
     };
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
     // Hàm để tính trạng thái của sự kiện
     const getEventStatus = (startAt, endAt) => {
         const today = new Date(); // Ngày hôm nay
@@ -143,6 +143,36 @@ function Events({isAdmin = false}) {
 
     // Lấy danh sách sự kiện đang diễn ra
     const ongoingEvents = arr.filter(event => getEventStatus(event.startAt, event.endAt) === 'dang-dien-ra');
+
+    // Hàm xoá sự kiện
+    const handleDeleteEvent = async () => {
+        if (!eventToDelete) return;
+        setDeleting(true);
+        setDeleteError("");
+        try {
+            const res = await fetch(`http://localhost:8084/api/sukien/${eventToDelete.eventId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+                }
+            });
+            if (!res.ok) throw new Error("Xoá sự kiện thất bại!");
+            // Xoá khỏi arr và filteredEvents
+            const newArr = arr.filter(ev => ev.eventId !== eventToDelete.eventId);
+            setArr(newArr);
+            setFilteredEvents(filteredEvents.filter(ev => ev.eventId !== eventToDelete.eventId));
+            setShowDeleteModal(false);
+            setEventToDelete(null);
+        } catch (err) {
+            setDeleteError(err.message || "Đã có lỗi xảy ra!");
+        } finally {
+            setDeleting(false);
+        }
+    };
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className={cx('container')}>
@@ -207,6 +237,18 @@ function Events({isAdmin = false}) {
                         const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
                         return (
                             <div key={index} className={cx('event-card')} onClick={() => navigate(`/events/${event.eventId}`)}>
+                                {isAdmin && (
+                                    <button
+                                        className={cx('delete-btn')}
+                                        onClick={e => {
+                                            e.stopPropagation();
+                                            setEventToDelete(event);
+                                            setShowDeleteModal(true);
+                                        }}
+                                    >
+                                        Xoá
+                                    </button>
+                                )}
                                 <div className={cx('event-image-wrapper')}>
                                     <img src={event.fileDTOList[0] ? (url + event.fileDTOList[0].downloadUrl) : "https://soict.hust.edu.vn/wp-content/uploads/2019/05/a.jpg"} className={cx('event-image')}></img>
                                     <div className={cx('event-date-overlay')}>
@@ -257,7 +299,24 @@ function Events({isAdmin = false}) {
             </div>}
             </div>
 
-         
+            {/* Modal xác nhận xoá */}
+            {showDeleteModal && (
+                <div className={cx('delete-modal-overlay')}>
+                    <div className={cx('delete-modal')}>
+                        <div className={cx('delete-modal-title')}>Xác nhận xoá sự kiện</div>
+                        <div className={cx('delete-modal-message')}>
+                            Bạn có chắc chắn muốn xoá sự kiện "{eventToDelete?.eventName}" không?
+                        </div>
+                        {deleteError && <div style={{color:'#dc3545', marginBottom:8}}>{deleteError}</div>}
+                        <div className={cx('delete-modal-actions')}>
+                            <button className={cx('delete-modal-cancel')} onClick={() => {setShowDeleteModal(false); setEventToDelete(null);}} disabled={deleting}>Huỷ</button>
+                            <button className={cx('delete-modal-confirm')} onClick={handleDeleteEvent} disabled={deleting}>
+                                {deleting ? 'Đang xoá...' : 'Xoá'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 

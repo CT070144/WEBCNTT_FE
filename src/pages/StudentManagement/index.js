@@ -18,7 +18,7 @@ function StudentManagement() {
     const [pagination, setPagination] = useState({
         totalPages: 0,
         currentPage: 0,
-        pageSize: 8,
+        pageSize: 10,
     });
 
     const [showForm, setShowForm] = useState(false);
@@ -155,6 +155,27 @@ function StudentManagement() {
         }
     };
 
+    // Fetch tất cả sinh viên một lần để filter client
+    const [allStudents, setAllStudents] = useState([]);
+    const [loadingAllStudents, setLoadingAllStudents] = useState(false);
+
+    // Fetch tất cả sinh viên (không phân trang, chỉ dùng cho tìm kiếm client)
+    const fetchAllStudents = async () => {
+        setLoadingAllStudents(true);
+        try {
+            const response = await fetch(`http://localhost:8084/api/students?size=1000`, {
+                headers: getAuthHeaders(),
+            });
+            const data = await response.json();
+            setAllStudents(data.content || []);
+            
+        } catch (error) {
+            setAllStudents([]);
+        } finally {
+            setLoadingAllStudents(false);
+        }
+    };
+
     // Fetch danh sách sinh viên
     const fetchUsers = async (page = 0) => {
         try {
@@ -201,25 +222,35 @@ function StudentManagement() {
     useEffect(() => {
         fetchUsers();
         fetchClasses();
+        fetchAllStudents(); // Gọi fetchAllStudents khi mount
     }, []);
 
-    // Xử lý bộ lọc
-    const handleFilterChange = (e) => {
-        const selected = e.target.value;
-        setSelectedClass(selected);
-        filterUsers(selected, searchTerm);
-    };
-
-    // Xử lý tìm kiếm theo tên
+    // Xử lý tìm kiếm theo tên hoặc mã sinh viên (filter client)
     const handleSearchChange = (e) => {
         const value = e.target.value;
+       
         setSearchTerm(value);
-        filterUsers(selectedClass, value);
+        // Nếu không nhập gì thì trả về tất cả
+        if (!value.trim()) {
+            filterUsers(selectedClass, "");
+            return;
+        }
+        // Lọc trên allStudents
+        let filtered = allStudents;
+        if (selectedClass) {
+            filtered = filtered.filter((user) => user.tenLop === selectedClass);
+        }
+        filtered = filtered.filter((user) =>
+            user.tenSinhVien.toLowerCase().includes(value.toLowerCase()) ||
+            user.maSinhVien.toLowerCase().includes(value.toLowerCase())
+        );
+        setFilteredUsers(filtered);
     };
 
-    // Kết hợp lọc theo lớp và tìm kiếm tên
+    // Kết hợp lọc theo lớp và tìm kiếm tên (filter client)
     const filterUsers = (classValue, nameValue) => {
-        let filtered = users;
+        let filtered = allStudents;
+        
         if (classValue) {
             filtered = filtered.filter((user) => user.tenLop === classValue);
         }
@@ -228,10 +259,7 @@ function StudentManagement() {
                 user.tenSinhVien.toLowerCase().includes(nameValue.toLowerCase())||
                 user.maSinhVien.toLowerCase().includes(nameValue.toLowerCase())
             );
-
-
         }
-        
         setFilteredUsers(filtered);
     };
 
@@ -299,6 +327,7 @@ function StudentManagement() {
             setErrors({});
             setTouched({});
             fetchUsers(pagination.currentPage);
+            fetchAllStudents();
             editMode 
                 ? toast.success("Chỉnh sửa sinh viên thành công!") 
                 : toast.success("Thêm sinh viên thành công!");
@@ -338,6 +367,7 @@ function StudentManagement() {
             setShowDeleteModal(false);
             setStudentToDelete(null);
             fetchUsers(pagination.currentPage);
+            fetchAllStudents();
             toast.success("Xóa sinh viên thành công!");
         } catch (error) {
             toast.error("Lỗi khi xóa sinh viên: " + error.message);
@@ -366,9 +396,17 @@ function StudentManagement() {
     const userAuth = JSON.parse(userString);
     const userRole = userAuth ? userAuth.roles : null;
 
+    // Xử lý bộ lọc lớp (filter client)
+    const handleFilterChange = (e) => {
+        const selected = e.target.value;
+        setSelectedClass(selected);
+        filterUsers(selected, searchTerm);
+       
+    };
+
     return (
         <div className={cx("user-management")}>
-            <h2 className={cx("title")}>Quản Lý Sinh Viên</h2>
+            <h2 className={cx("title")}>Quản Lý tài khoản sinh Viên</h2>
 
             {/* Bộ lọc lớp & Tìm kiếm */}
             <div className={cx("filter-section")}>
@@ -384,7 +422,7 @@ function StudentManagement() {
                 <input
                     type="text"
                     className={cx("search-input")}
-                    placeholder="Tìm kiếm theo tên sinh viên..."
+                    placeholder="Tìm kiếm sinh viên..."
                     value={searchTerm}
                     onChange={handleSearchChange}
                 />

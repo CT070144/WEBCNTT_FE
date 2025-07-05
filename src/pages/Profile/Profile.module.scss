@@ -39,7 +39,9 @@
         }
 
         .wallpaper {
-            background-color: rgba(143, 137, 137, 0.1);
+            background-image: url("https://scontent.fhan2-4.fna.fbcdn.net/v/t39.30808-6/481053605_1033122085510986_6103680854640549115_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=86c6b0&_nc_ohc=4kulmoBjLBgQ7kNvwEePL9x&_nc_oc=Adk3DqPp1njm0-Fauj-r1FrLDQEKsPK0WvBWr-CdbKse_W71ctGaeBr-TJK5zgyNBjM&_nc_zt=23&_nc_ht=scontent.fhan2-4.fna&_nc_gid=kKIA7MuqzcUe6bJbxBmFJA&oh=00_AfNtj8XI6Ikt49ZNkThCrd5FZc-5XqiqmWqBO89Ul_3DJg&oe=686C039E");
+            background-size: cover;
+            object-fit: contain;
             height: 150px;
         }
     }

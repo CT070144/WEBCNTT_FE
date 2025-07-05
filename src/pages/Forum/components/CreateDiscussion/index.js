@@ -101,30 +101,7 @@ const CreateDiscussion = () => {
                 <Input.TextArea rows={4} placeholder="Nhập nội dung thảo luận" />
             </Form.Item>
 
-            <Form.Item label="Thẻ (Tags)">
-                <Select
-                    placeholder="Chọn thẻ"
-                    onSelect={handleTagSelect}
-                    style={{ width: "100%" }}
-                >
-                    {tags.map((tag) => (
-                        <Option key={tag.tagId} value={tag.tagId}>
-                            {tag.tagName}
-                        </Option>
-                    ))}
-                </Select>
-                <div style={{ marginTop: "10px" }}>
-                    {selectedTags.map((tag) => (
-                        <Tag
-                            key={tag.tagId}
-                            closable
-                            onClose={() => handleTagClose(tag.tagId)}
-                        >
-                            {tag.tagName}
-                        </Tag>
-                    ))}
-                </div>
-            </Form.Item>
+           
 
             <Form.Item>
                 <Button type="primary" htmlType="submit">

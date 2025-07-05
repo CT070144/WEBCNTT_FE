@@ -26,7 +26,7 @@ import ProgramDetail from "~/pages/TrainingProgram/ProgramDetail";
 import General from "~/pages/Introduce/General";
 import PostsAdmin from "~/pages/Posts/PostsAdmin";
 import EventAdmin from "~/pages/Events/EventAdmin";
-
+import ForumStudent from "~/pages/Forum/ForumStudent";
 const allowAll = ['ROLE_ADMIN', 'ROLE_EMPLOYEE', 'ROLE_STUDENT'];
 const allowStaff = ['ROLE_ADMIN', 'ROLE_EMPLOYEE'];
 
@@ -51,15 +51,17 @@ const privateRoutes = [
     { path: '/admin', component: Home, allowedRole: ['ROLE_ADMIN'] },
     { path: '/createPost', component: CreatePost, allowedRole: ['ROLE_ADMIN', 'ROLE_EMPLOYEE'] },
    
-    { path: '/student', component: Home, allowedRole: ['ROLE_STUDENT'], layout: DefaultLayout },
+    { path: '/student', component: ForumStudent, allowedRole: ['ROLE_STUDENT'], layout: DefaultLayout },
+    { path: '/student/kmaforum', component: ForumStudent, allowedRole: ['ROLE_STUDENT'], layout: DefaultLayout },
+    { path: '/student/createDiscussion', component: CreateDiscussion, allowedRole: ['ROLE_STUDENT'], layout: DefaultLayout },
     { path: '/employee', component: Home, allowedRole: ['ROLE_EMPLOYEE'] },
     { path: '/studentmanagement', component: StudentManagement, allowedRole: ['ROLE_ADMIN', 'ROLE_EMPLOYEE'] },
     { path: '/employeemanagement', component: EmployeeManagement, allowedRole: ['ROLE_ADMIN'] },
     { path: '/coursedocument', component: CourseDocument, allowedRole: ['ROLE_ADMIN','ROLE_EMPLOYEE','ROLE_STUDENT'] },
-    { path: '/kmaforum', component: Forum, allowedRole: ['ROLE_ADMIN', 'ROLE_EMPLOYEE', 'ROLE_STUDENT'] },
+    { path: '/kmaforum', component: Forum, allowedRole: ['ROLE_ADMIN', 'ROLE_EMPLOYEE'] },
     { path: '/profile', component: Profile, allowedRole: allowAll },
     { path: '/events/user', component: EventAdmin, allowedRole: allowAll },
-    { path: '/createEvent/user', component: CreateEvent, allowedRole: ['ROLE_ADMIN'] },
+    { path: '/createEvent/user', component: CreateEvent, allowedRole: ['ROLE_ADMIN','ROLE_EMPLOYEE'] },
     { path: '/createLayout/user', component: CreateLayout, allowedRole: allowStaff },
     { path: '/crud-navbar', component: CRUDNavbar, allowedRole: ['ROLE_ADMIN'] },
     { path: '/create-layout-for-menuitem/:slug', component: AddLMI, allowedRole: allowStaff },

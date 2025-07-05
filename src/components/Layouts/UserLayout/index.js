@@ -230,7 +230,7 @@ function UserLayout({ children }) {
                                 }}
                                 placement="bottomRight"
                             >
-                                <img className={cx("avatar")} src={user.avaFileCode != undefined ? ("http://localhost:8084" + user.avaFileCode) : "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"} alt=""></img>
+                                <img className={cx("avatar")} src={user.avaFileCode !== "/downloadProfile/" ? ("http://localhost:8084" + user.avaFileCode) : "https://gist.githubusercontent.com/vinhjaxt/fa4208fd6902dd8b2f4d944fa6e7f2af/raw/454f58aeac4fdeb459476eae7128dc6ff57df25f/logo-hvktmm.png"} alt=""></img>
                             </Dropdown>
                         </div>)
                     }
