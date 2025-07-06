@@ -304,7 +304,7 @@ function EmployeeManagement() {
         fetchEmployees(pagination.currentPage);
       } else {
         const errorData = await response.json();
-        const errorMessage = errorData.message || "Thêm nhân viên thất bại";
+        const errorMessage = errorData.message || "Mã nhân viên đã tồn tại";
         toast.error(errorMessage);
       }
     } catch (error) {

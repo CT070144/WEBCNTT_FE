@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import classNames from "classnames/bind";
 import styles from "./PostDetail.module.scss";
 import { FileOutlined } from "@ant-design/icons";
+import { Button } from "antd";
 
 function PostDetail() {
     const cx = classNames.bind(styles);
@@ -138,6 +139,7 @@ function PostDetail() {
                     </div>
                 )}
             </div>
+         
         </div>
     );
 }

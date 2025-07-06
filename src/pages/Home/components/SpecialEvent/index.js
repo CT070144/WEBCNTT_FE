@@ -5,15 +5,21 @@ import styles from "./SpecialEvent.module.scss";
 import { CalendarFilled } from "@ant-design/icons";
 import { Button } from "antd";
 import { useAuth } from "~/Authentication/AuthContext";
+import { toast } from 'react-toastify';
 
 function SpecialEvent({titleHidden = false, buttonHidden = false}) {
     const navigate = useNavigate();
     const cx = classNames.bind(styles);
     const url = process.env.REACT_APP_API_URL;
-    const { user } = useAuth();
+   
     const [arr, setArr] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentEvent, setCurrentEvent] = useState(null);
+    const [registering, setRegistering] = useState(false);
+    const userString = localStorage.getItem('user');
+                const user = JSON.parse(userString);
+
+
 
     const fetchEvent = async (eventId) => {
         try {
@@ -52,18 +58,11 @@ function SpecialEvent({titleHidden = false, buttonHidden = false}) {
         console.log(currentEvent)
     }, [])
 
-
-
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
     // Hàm để tính trạng thái của sự kiện
     const getEventStatus = (startAt, endAt) => {
         const today = new Date(); // Ngày hôm nay
         const startDate = new Date(startAt); // Chuyển startAt thành đối tượng Date
         const endDate = new Date(endAt); // Chuyển endAt thành đối tượng Date
-
 
         // So sánh ngày hôm nay với ngày bắt đầu và kết thúc sự kiện
         if (today < startDate) {
@@ -75,27 +74,78 @@ function SpecialEvent({titleHidden = false, buttonHidden = false}) {
         }
     };
 
+    // Hàm đăng ký sự kiện
+    const handleRegister = async () => {
+        if (!user || !user.userName) {
+            toast.error("Vui lòng đăng nhập để đăng ký tham gia");
+            
+            setTimeout(() => {
+                navigate("/login");
+            }, 500);
+            return;
+        }
+        setRegistering(true);
+        try {
+            const formData = new FormData();
+            formData.append('maSinhVien', user.userName);
+            formData.append('eventId', currentEvent.eventId);
+
+            const token = localStorage.getItem('auth_token');
+            const response = await fetch('http://localhost:8084/api/registration', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Bạn đã đăng kí tham gia sự kiện này trước đó');
+            }
+
+            toast.success("Đăng ký tham gia thành công!");
+        } catch (err) {
+            toast.error(err.message);
+        } finally {
+            setRegistering(false);
+        }
+    };
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
     return (
         <div className={cx('container')}>
             {!titleHidden && <h1>SỰ KIỆN MỚI NHẤT</h1>}
 
-            <div className={cx("list-detail")}>
-                <div className={cx("event-cel")}>
+            <div className={cx("list-detail")}> 
+                <div className={cx("event-cel")}> 
                     <img src={currentEvent.fileDTOList[0] ? (url + currentEvent.fileDTOList[0].downloadUrl) : "https://soict.hust.edu.vn/wp-content/uploads/2019/05/a.jpg"}></img>
-                    <div className={cx("event-info")}>
-                        <div className={cx("info-header")}>
+                    <div className={cx("event-info")}> 
+                        <div className={cx("info-header")}> 
                             <img src={currentEvent.fileDTOList[0] ? (url + currentEvent.fileDTOList[0].downloadUrl) : "https://actvn.edu.vn/Images/actvn_big_icon.png"}></img>
                             <h2>{currentEvent.eventName}</h2>
                         </div>
 
-                        <div className={cx("info-content")}>
-                            <div className={cx("info-detail")}>
+                        <div className={cx("info-content")}> 
+                            <div className={cx("info-detail")}> 
                                 <div><CalendarFilled /> Ngày bắt đầu: {currentEvent.startAt.split("-").reverse().join("/")}</div>
                                 <div><CalendarFilled /> Ngày kết thúc: {currentEvent.endAt.split("-").reverse().join("/")}</div>
                                 <div><i className="fa-solid fa-location-dot"></i> {currentEvent.location}</div>
                             </div>
-                            <div className={cx("info-actions")}>
- 
+                            <div className={cx("info-actions")}> 
+                               {((user==null)||(user&&user.roles.includes("ROLE_STUDENT")))&&(
+                                <Button
+                                    className={cx("register")}
+                                    onClick={handleRegister}
+                                    loading={registering}
+                                    disabled={registering}
+                                >
+                                    Đăng ký ngay
+                                </Button>
+                               )}
                                 <Button className={cx("register")} onClick={() => navigate(`/events/${currentEvent.eventId}`)}>Chi tiết</Button>
                                 
                             </div>

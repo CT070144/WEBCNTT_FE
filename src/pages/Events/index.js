@@ -19,6 +19,20 @@ function Events({isAdmin = false}) {
     const [eventToDelete, setEventToDelete] = useState(null);
     const [deleting, setDeleting] = useState(false);
     const [deleteError, setDeleteError] = useState("");
+    const [user, setUser] = useState(null);
+    const [participatedEvents, setParticipatedEvents] = useState([]);
+
+    useEffect(() => {
+        const userString = localStorage.getItem('user');
+        if (userString) {
+            const userData = JSON.parse(userString);
+            setUser(userData);
+            // Fetch participated events when user is loaded
+            if (userData && userData.userName) {
+                fetchParticipatedEvents();
+            }
+        }
+    }, []);
 
     useEffect(() => {
         fetch(url + "/api/public/sukien?page=0", {
@@ -35,6 +49,32 @@ function Events({isAdmin = false}) {
                 setLoading(false);
             });
     }, []);
+
+    // Fetch participated events
+    const fetchParticipatedEvents = async () => {
+        if (!user || !user.userName) return;
+        console.log("call fetchParticipatedEvents");
+        
+        try {
+            const token = localStorage.getItem('auth_token');
+            const response = await fetch(`http://localhost:8084/api/students/participated_events/${user.userName}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data + "d");
+                setParticipatedEvents(data);
+
+                console.log(participatedEvents + "HEHEH");
+                
+            }
+        } catch (err) {
+            console.error('Error fetching participated events:', err);
+        }
+    };
 
     // Hàm tìm kiếm sự kiện
     const handleSearch = () => {
@@ -54,7 +94,7 @@ function Events({isAdmin = false}) {
     };
 
     // Hàm lọc sự kiện
-    const applyFilter = (eventsToFilter, type, date) => {
+    const applyFilter = (eventsToFilter, type) => {
         let filtered = eventsToFilter;
 
         switch (type) {
@@ -67,43 +107,45 @@ function Events({isAdmin = false}) {
             case "da-ket-thuc":
                 filtered = eventsToFilter.filter(event => getEventStatus(event.startAt, event.endAt) === 'da-ket-thuc');
                 break;
-            case "date":
-                if (date) {
-                    const selectedDateObj = new Date(date);
-                    selectedDateObj.setHours(0, 0, 0, 0);
-                    
-                    filtered = eventsToFilter.filter(event => {
-                        const startDate = new Date(event.startAt);
-                        const endDate = new Date(event.endAt);
-                        startDate.setHours(0, 0, 0, 0);
-                        endDate.setHours(0, 0, 0, 0);
-                        
-                        // Kiểm tra xem ngày được chọn có nằm trong khoảng thời gian sự kiện không
-                        return selectedDateObj >= startDate && selectedDateObj <= endDate;
-                    });
+                        case "da-dang-ky":
+                // Lọc sự kiện đã đăng ký - luôn sử dụng arr gốc
+                console.log(participatedEvents + "HEHEHEH");
+                if (participatedEvents && participatedEvents.length > 0) {
+                    setFilteredEvents(participatedEvents);
+                    return;
+                } else {
+                    filtered = []; // Không có sự kiện nào đã đăng ký
                 }
                 break;
+          
             default:
                 // "all" - không lọc gì cả
                 break;
         }
-
+        
         setFilteredEvents(filtered);
     };
 
-    // Xử lý khi thay đổi filter
-    const handleFilterChange = (e) => {
+    // Khi thay đổi filter
+    const handleFilterChange = async (e) => {
         const newFilterType = e.target.value;
         setFilterType(newFilterType);
-        
-        if (newFilterType === "date") {
-            // Nếu chọn lọc theo ngày, reset selectedDate để hiển thị input date
-            setSelectedDate("");
+
+        if (newFilterType === "da-dang-ky") {
+            await fetchParticipatedEvents();
+            // KHÔNG gọi applyFilter ở đây!
         } else {
-            // Áp dụng filter mới
-            applyFilter(arr, newFilterType, selectedDate);
+            applyFilter(arr, newFilterType);
         }
     };
+
+    // Lắng nghe participatedEvents và filterType
+    useEffect(() => {
+        if (filterType === "da-dang-ky") {
+            applyFilter(arr, "da-dang-ky");
+        }
+        // eslint-disable-next-line
+    }, [participatedEvents, filterType]);
 
     // Xử lý khi thay đổi ngày
     const handleDateChange = (e) => {
@@ -207,7 +249,9 @@ function Events({isAdmin = false}) {
                            <option value="chua-bat-dau">Chưa bắt đầu</option>
                            <option value="dang-dien-ra">Đang diễn ra</option>
                            <option value="da-ket-thuc">Đã kết thúc</option>
-                           
+                          {user&&user.roles.includes("ROLE_STUDENT")&&(
+                            <option value="da-dang-ky">Đã đăng ký</option>
+                          )}
                        </select>
                        
                        {filterType === "date" && (
@@ -263,13 +307,17 @@ function Events({isAdmin = false}) {
                                     </div>
                                     <div className={cx('event-description')}>{event.description ? (event.description.length > 100 ? event.description.slice(0, 100) + '...' : event.description) : ''}</div>
                                 </div>
+
+                              {/*  <span className={cx('event-participants')}> 10 lượt đăng kí tham gia</span> */}
                             </div>
                         )
                     })
                 ) : (
                     <div className={cx('no-results')}>
                         {searchTerm || filterType !== "all" ? 
-                         `Không tìm thấy sự kiện nào phù hợp với điều kiện tìm kiếm.` : 
+                         (filterType === "da-dang-ky" ? 
+                          "Bạn chưa đăng ký tham gia sự kiện nào." : 
+                          `Không tìm thấy sự kiện nào phù hợp với điều kiện tìm kiếm.`) : 
                          "Không có sự kiện nào để hiển thị."
                         }
                     </div>

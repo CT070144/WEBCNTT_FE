@@ -3,8 +3,11 @@ import { jwtDecode as decode } from 'jwt-decode';
 import classNames from 'classnames/bind';
 import styles from './Login.module.scss'
 import Notification from '~/components/Notification';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+    const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
@@ -13,6 +16,14 @@ const Login = () => {
     const formData = {};
     const api = process.env.REACT_APP_API_URL;
 
+
+    useEffect(() => {
+        const userString = localStorage.getItem('user');
+        const user = JSON.parse(userString);
+        if (user) {
+           navigate("/");
+        }
+    }, []);
     // Xử lý form đăng nhập
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -38,7 +49,7 @@ const Login = () => {
                 } else if (decodedToken.roles[0].includes("ROLE_EMPLOYEE")) {
                     window.location.replace("/employee");
                 } else {
-                    window.location.replace("/student/kmaforum");
+                    window.location.replace("/");
                 }
             }, 1200);
         } catch (err) {

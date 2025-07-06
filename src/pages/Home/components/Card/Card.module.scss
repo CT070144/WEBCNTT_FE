@@ -38,11 +38,12 @@
 
 .cardContent {
   flex: 1;
-  padding: 24px 32px;
+  padding: 24px 16px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   overflow: hidden;
+  line-height: 1.5;
   height: 100%;
 }
 

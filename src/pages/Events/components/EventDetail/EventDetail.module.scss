@@ -143,3 +143,121 @@
     text-align: center;
     margin-top: 20px;
 }
+.register-button-disabled {
+    background-color: #ffffff !important;
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    cursor: not-allowed;
+}
+
+.event-participants{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    .event-participants-title{
+        font-size: 18px;
+        color: #009808;
+        font-weight: 600;
+        margin-bottom: 10px;
+        display: block;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        display: inline-block;
+        
+    }
+    .view-participants{
+        width: 300px !important;
+        margin-top: 10px;
+        display: inline-block;
+    }
+}
+
+/* Modal danh sách sinh viên đăng ký tham gia sự kiện */
+.student-modal {
+    background: #f8fafc;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.16);
+    padding: 0;
+    min-width: 320px;
+    max-width: 980px;
+    border: 2px solid var(--primary);
+    overflow: hidden;
+}
+
+.student-modal-title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 800;
+    color: #fff;
+    margin: 0;
+    letter-spacing: 1px;
+    padding: 24px 0 18px 0;
+    background: linear-gradient(90deg, var(--primary) 0%, #e53935 100%);
+    border-bottom: 3px solid var(--primary);
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+.student-modal-table {
+    background: #fff;
+    border-radius: 0 0 16px 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    overflow-x: auto;
+    margin-bottom: 10px;
+    max-height: 420px;
+    overflow-y: auto;
+    padding: 18px 10px 10px 10px;
+}
+
+.student-modal-table .ant-table {
+    border-radius: 12px;
+    border: 1.5px solid var(--primary);
+}
+
+.student-modal-table .ant-table-thead > tr > th {
+    background: linear-gradient(90deg, var(--primary) 0%, #e53935 100%);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    text-align: center;
+    border-bottom: 2px solid var(--primary);
+    letter-spacing: 0.5px;
+}
+
+.student-modal-table .ant-table-tbody > tr > td {
+    font-size: 14px;
+    color: #333;
+    text-align: center;
+    padding: 10px 8px;
+    border-bottom: 1.5px solid #f1f1f1;
+    transition: background 0.2s;
+}
+
+.student-modal-table .ant-table-tbody > tr:hover > td {
+    background: #ffeaea;
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.student-modal .ant-modal-content {
+    border-radius: 16px;
+    padding: 0;
+    border: 2px solid var(--primary);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.16);
+}
+
+@media (max-width: 900px) {
+    .student-modal {
+        padding: 0;
+        min-width: 0;
+        max-width: 100vw;
+    }
+    .student-modal-table {
+        max-height: 300px;
+        padding: 8px 2px 2px 2px;
+    }
+    .student-modal-title {
+        font-size: 18px;
+        padding: 16px 0 10px 0;
+    }
+}

@@ -103,7 +103,7 @@ function DefaultLayout({ children }) {
         setShowScrollTop(true);
       } else {
         setShowScrollTop(false);
-      }
+      } 
 
       setLastScrollY(currentScrollY);
     };
